@@ -24,6 +24,7 @@ public class Category {
     private Long id;
     private String name;
     // TO this relationship normal
+    //lkausdghflkjas
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "category")
     private List<Product> products = new ArrayList<>();
 
