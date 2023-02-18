@@ -29,6 +29,9 @@ public class Category {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_category_id")
-    private Category category;
+    private Category parentCategory;
+
+    @OneToMany(mappedBy ="parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Category> categories = new ArrayList<>();
 
 }
