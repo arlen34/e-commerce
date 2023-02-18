@@ -22,7 +22,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_NAME)
     @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME)
     private Long id;
-    private String name;
+    private String categoryName;
+
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "category")
     private List<Product> products = new ArrayList<>();
 
