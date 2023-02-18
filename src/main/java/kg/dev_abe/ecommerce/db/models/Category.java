@@ -22,9 +22,19 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_NAME)
     @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME)
     private Long id;
+
     private String categoryName;
+=======
+    private String name;
+
 
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "category")
     private List<Product> products = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_category_id")
+    private Category parentCategory;
+
+    @OneToMany(mappedBy ="parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Category> categories = new ArrayList<>();
 }
