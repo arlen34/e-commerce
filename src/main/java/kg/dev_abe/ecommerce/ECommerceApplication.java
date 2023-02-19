@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @SpringBootApplication
-public class    ECommerceApplication {
+public class ECommerceApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ECommerceApplication.class, args);
-        System.out.println("Welcome colleagues, project name is E-COMMERСE!");
+        System.out.println("Welcome colleagues, project name is E-COMMERCE!");
     }
 
     @GetMapping("/")

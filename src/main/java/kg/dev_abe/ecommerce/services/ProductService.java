@@ -1,6 +1,6 @@
 package kg.dev_abe.ecommerce.services;
 
-import kg.dev_abe.ecommerce.db.models.Product;
+import kg.dev_abe.ecommerce.models.Product;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
 import kg.dev_abe.ecommerce.repositories.ProductRepository;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,8 @@
 package kg.dev_abe.ecommerce.repositories;
 
-import kg.dev_abe.ecommerce.db.models.Product;
-import kg.dev_abe.ecommerce.db.models.Review;
-import kg.dev_abe.ecommerce.db.models.User;
+import kg.dev_abe.ecommerce.models.Product;
+import kg.dev_abe.ecommerce.models.Review;
+import kg.dev_abe.ecommerce.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

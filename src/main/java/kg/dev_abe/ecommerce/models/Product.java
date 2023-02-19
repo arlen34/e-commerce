@@ -1,4 +1,4 @@
-package kg.dev_abe.ecommerce.db.models;
+package kg.dev_abe.ecommerce.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
