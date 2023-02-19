@@ -1,7 +1,7 @@
 package kg.dev_abe.ecommerce.services;
 
-import kg.dev_abe.ecommerce.db.models.Category;
-import kg.dev_abe.ecommerce.db.models.Product;
+import kg.dev_abe.ecommerce.models.Category;
+import kg.dev_abe.ecommerce.models.Product;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

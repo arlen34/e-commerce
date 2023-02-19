@@ -1,6 +1,6 @@
-package kg.dev_abe.ecommerce.controllers;
+package kg.dev_abe.ecommerce.api;
 
-import kg.dev_abe.ecommerce.db.models.Product;
+import kg.dev_abe.ecommerce.models.Product;
 import kg.dev_abe.ecommerce.services.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
