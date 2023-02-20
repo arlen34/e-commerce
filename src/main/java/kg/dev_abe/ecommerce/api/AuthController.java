@@ -43,16 +43,8 @@ public class AuthController {
     public ResponseEntity <User> getUserById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
     }
-//    @PostMapping("/register")
-//    public ResponseEntity <String> registerUser(@RequestBody User user) {
-//        userService.registerUser(user);
-//        return new ResponseEntity<>("User registration successful", HttpStatus.OK);
-//    }
-//    @PostMapping("/login")
-//    public ResponseEntity <String> loginUser(@RequestBody User user){
-//        userService.loginUser(user);
-//        return new ResponseEntity<>("User login successful", HttpStatus.OK);
-//    }
+
+    @PreAuthorize(value = "hasAuthority('ADMIN')")
     @DeleteMapping("{id}")
     public ResponseEntity <String> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);

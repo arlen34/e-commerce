@@ -25,11 +25,14 @@ public class Product {
     private String productName;
     private String description;
     private Double price;
-    private String imageUrl;
-    private Integer quantity;
+    private Integer amount;
     @ManyToOne
     private Category category;
 
     @OneToMany(mappedBy = "product")
     private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
+    private List<ProductImage> imageList = new ArrayList<>();
+
 }
