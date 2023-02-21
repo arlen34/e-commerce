@@ -1,5 +1,6 @@
 package kg.dev_abe.ecommerce.api;
 
+import kg.dev_abe.ecommerce.dto.response.ProductResponse;
 import kg.dev_abe.ecommerce.models.Product;
 import kg.dev_abe.ecommerce.services.ProductService;
 import lombok.AllArgsConstructor;
@@ -13,12 +14,13 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     @GetMapping("/all")
-    public List<Product> getProducts() {
+    public List<ProductResponse> getProducts() {
         return productService.findAll();
     }
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
-        return productService.findById(id);
+    public ProductResponse getProductById(@PathVariable Long id) {
+        return productService.getProductById(id);
+
     }
     @PostMapping("/add")
     public Product addProduct(Product product) {

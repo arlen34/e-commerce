@@ -13,15 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/user")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Tag(name = "Authentication API",description = "The authentication API (for authentication)")
 public class AuthController {
-
     private UserService userService;
 
     @Operation(summary = "Retrieve Authentication Token",
@@ -50,6 +47,8 @@ public class AuthController {
         userService.deleteUserById(id);
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
+
+
     @PutMapping("{id}")
     public ResponseEntity <User> updateUserId(@PathVariable Long id, @RequestBody User user) {
         return new ResponseEntity<>(userService.updateUserId(id, user), HttpStatus.OK);
