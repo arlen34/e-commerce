@@ -2,10 +2,13 @@ package kg.dev_abe.ecommerce.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kg.dev_abe.ecommerce.dto.request.CategoryRequest;
+import kg.dev_abe.ecommerce.dto.request.CategoryUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
 import kg.dev_abe.ecommerce.models.Category;
 import kg.dev_abe.ecommerce.services.CategoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,20 +34,28 @@ public class CategoryController {
         return categoryService.getSubCategoriesByParentCatId(categoryId);
     }
 
+    @Operation(summary = "Create parent categories or sub categories",
+            description = "This endpoint returns the created categories")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/create")
+    public List<CategoryResponse> addCategory(@RequestBody CategoryRequest request) {
+        return categoryService.create(request);
+    }
 
-//    @PostMapping("/add")
-//    public void addCategory(@RequestBody Category category) {
-//        categoryService.addCategory(category);
-//    }
-//    @PutMapping("/update/{id}")
-//    public void updateCategory(@PathVariable Long id, @RequestBody Category category) {
-//        categoryService.updateCategory(id, category);
-//    }
-//    @DeleteMapping("/delete/{id}")
-//    public void deleteCategory(@PathVariable Long id) {
-//        categoryService.deleteCategory(id);
-//    }
+    @Operation(summary = "Update categories",
+            description = "This endpoint returns the updated categories")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PatchMapping
+    public List<CategoryResponse> updateCategory(@RequestBody CategoryUpdateRequest request) {
+        return categoryService.update(request);
+    }
 
-
+    @Operation(summary = "Delete categories",
+            description = "This endpoint returns the delete category")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/{id}")
+    public List<CategoryResponse> deleteCategory(@PathVariable Long id) {
+        return categoryService.deleteCategory(id);
+    }
 
 }
