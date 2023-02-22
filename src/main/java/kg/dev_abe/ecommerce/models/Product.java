@@ -1,6 +1,7 @@
 package kg.dev_abe.ecommerce.models;
 
 import jakarta.persistence.*;
+import kg.dev_abe.ecommerce.dto.request.ProductCreateRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,4 +36,13 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
     private List<ProductImage> imageList = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
+    private List<CartItem> cartItems;
+
+    public Product(ProductCreateRequest request) {
+        this.productName = request.getProductName();
+        this.description = request.getDescription();
+        this.price = request.getPrice();
+        this.amount = request.getAmount();
+    }
 }

@@ -1,8 +1,10 @@
 package kg.dev_abe.ecommerce.repositories;
 
+import jakarta.transaction.Transactional;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
 import kg.dev_abe.ecommerce.models.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -20,4 +22,14 @@ public interface CategoryRepository extends JpaRepository<Category,Long> {
 //    List<CategoryResponse> getAllCategories();
 
     List<CategoryResponse> findAllByParentCategoryIsNull();
+
+    @Modifying
+    @Transactional
+    @Query("update CartItem " +
+            "set product = null where id = ?1")
+    void updateByIdForDeleteInCartItem(Long id);
+//    @Modifying
+//    @Transactional
+//    @Query("delete from Category c where c.id = ?1")
+//    void deleteById(Long id);
 }

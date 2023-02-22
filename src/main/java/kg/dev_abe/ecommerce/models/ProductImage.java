@@ -22,4 +22,9 @@ public class ProductImage {
     private String imageUrl;
     @ManyToOne
     private Product product;
+
+    public ProductImage(String imageUrl, Product product) {
+        this.imageUrl = imageUrl;
+        this.product = product;
+    }
 }
