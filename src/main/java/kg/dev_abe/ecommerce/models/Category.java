@@ -23,7 +23,7 @@ public class Category {
 
     private String categoryName;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "category")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "category", orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

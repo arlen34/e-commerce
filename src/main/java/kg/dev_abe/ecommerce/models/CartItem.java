@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "cartItems")
+@Table(name = "cart_items")
 public class CartItem {
     private static final String SEQ_NAME = "cart_item_seq";
 
@@ -21,7 +21,6 @@ public class CartItem {
     private Long id;
     private Integer quantity;
     @ManyToOne
-    @JoinColumn(name = "product_id")
     private Product product;
     @ManyToOne
     private Cart cart;
