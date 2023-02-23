@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.ProductCreateRequest;
 import kg.dev_abe.ecommerce.dto.request.ProductUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.ProductResponse;
+import kg.dev_abe.ecommerce.dto.response.ProductResponses;
 import kg.dev_abe.ecommerce.services.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +24,7 @@ public class ProductController {
             description = "This endpoint returns a new created product with all products")
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/add")
-    public List<ProductResponse> addProduct(ProductCreateRequest request) {
+    public List<ProductResponses> addProduct(@RequestBody ProductCreateRequest request) {
         return productService.create(request);
     }
 
@@ -31,7 +32,7 @@ public class ProductController {
     @Operation(summary = "Get all products",
             description = "This endpoint returns all products")
     @GetMapping("/get-all/{categoryId}")
-    public List<ProductResponse> getProductsByCategoryId(@PathVariable Long categoryId) {
+    public List<ProductResponses> getProductsByCategoryId(@PathVariable Long categoryId) {
         return productService.getAllProductsByCategoryId(categoryId);
     }
     @Operation(summary = "Get a product by id",
@@ -54,7 +55,7 @@ public class ProductController {
             description = "This endpoint returns a deleted product with all products")
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public List<ProductResponse> deleteProductById(@PathVariable Long id) {
+    public List<ProductResponses> deleteProductById(@PathVariable Long id) {
         return productService.deleteById(id);
     }
 }

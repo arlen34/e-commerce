@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "cartItems")
+@Table(name = "cart_items")
 public class CartItem {
     private static final String SEQ_NAME = "cart_item_seq";
 
