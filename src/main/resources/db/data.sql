@@ -23,19 +23,7 @@ insert into products (id, amount, description, price, product_name, category_id)
                                                                                      (8, 8, 'LG 1999x1200', 750, 'LG', 4),
                                                                                      (9, 6, 'Samsung 1999x1200', 850, 'Samsung', 4);
 
-insert into products_images (id, image_url, product_id) VALUES
-                                                            (1, 'https://avatars.mds.yandex.net/i?id=6499a763e3e03bddca597d85fc239a63dcfa24da-8242815-images-thumbs&n=13', 1),
-                                                            (2, 'https://avatars.mds.yandex.net/i?id=6499a763e3e03bddca597d85fc239a63dcfa24da-8242815-images-thumbs&n=13', 1),
-                                                            (3, 'https://avatars.mds.yandex.net/i?id=6499a763e3e03bddca597d85fc239a63dcfa24da-8242815-images-thumbs&n=13', 2),
-                                                            (4, 'https://avatars.mds.yandex.net/i?id=6499a763e3e03bddca597d85fc239a63dcfa24da-8242815-images-thumbs&n=13', 3),
-                                                            (5, 'https://avatars.mds.yandex.net/i?id=8ca55d0b16b51d48635a74c5694e0e045f79161d-8497314-images-thumbs&n=13', 4),
-                                                            (6, 'https://avatars.mds.yandex.net/i?id=8ca55d0b16b51d48635a74c5694e0e045f79161d-8497314-images-thumbs&n=13', 5),
-                                                            (7, 'https://avatars.mds.yandex.net/i?id=8ca55d0b16b51d48635a74c5694e0e045f79161d-8497314-images-thumbs&n=13', 6),
-                                                            (8, 'https://avatars.mds.yandex.net/i?id=ba7cb8f761ee436130f5aa062ad3c7fd399075aa-8554591-images-thumbs&n=13', 7),
-                                                            (9, 'https://avatars.mds.yandex.net/i?id=ba7cb8f761ee436130f5aa062ad3c7fd399075aa-8554591-images-thumbs&n=13', 8),
-                                                            (10, 'https://avatars.mds.yandex.net/i?id=ba7cb8f761ee436130f5aa062ad3c7fd399075aa-8554591-images-thumbs&n=13', 9),
-                                                            (11, 'https://avatars.mds.yandex.net/i?id=ba7cb8f761ee436130f5aa062ad3c7fd399075aa-8554591-images-thumbs&n=13', 9),
-                                                            (12, 'https://avatars.mds.yandex.net/i?id=ba7cb8f761ee436130f5aa062ad3c7fd399075aa-8554591-images-thumbs&n=13', 9);
+
 
 insert into carts (id, user_id) VALUES
     (1, 2);

@@ -5,36 +5,47 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.ProductCreateRequest;
 import kg.dev_abe.ecommerce.dto.request.ProductUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.ProductResponse;
-import kg.dev_abe.ecommerce.dto.response.ProductResponses;
 import kg.dev_abe.ecommerce.services.ProductService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
 @AllArgsConstructor
 @CrossOrigin(origins = "*", maxAge = 3600)
-@Tag(name = "Product API",description = "The products API for all ")
+@Tag(name = "Product API", description = "The products API for all ")
 public class ProductController {
     private final ProductService productService;
+
     @Operation(summary = "Post the new product",
             description = "This endpoint returns a new created product with all products")
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/add")
-    public List<ProductResponses> addProduct(@RequestBody ProductCreateRequest request) {
+    @PostMapping(path = "/add")
+    public List<ProductResponse> addProduct(@RequestBody ProductCreateRequest request) {
         return productService.create(request);
+
+    }
+
+    @PostMapping(path = "{id}/add-image/", consumes = {"multipart/form-data"})
+    public ResponseEntity<ProductResponse> addImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        return new ResponseEntity<>(productService.addImage(id, file), HttpStatus.OK);
     }
 
 
     @Operation(summary = "Get all products",
             description = "This endpoint returns all products")
     @GetMapping("/get-all/{categoryId}")
-    public List<ProductResponses> getProductsByCategoryId(@PathVariable Long categoryId) {
+    public List<ProductResponse> getProductsByCategoryId(@PathVariable Long categoryId) {
         return productService.getAllProductsByCategoryId(categoryId);
     }
+
     @Operation(summary = "Get a product by id",
             description = "This endpoint returns product by product id")
     @GetMapping("/{id}")
@@ -55,7 +66,7 @@ public class ProductController {
             description = "This endpoint returns a deleted product with all products")
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public List<ProductResponses> deleteProductById(@PathVariable Long id) {
+    public List<ProductResponse> deleteProductById(@PathVariable Long id) {
         return productService.deleteById(id);
     }
 }

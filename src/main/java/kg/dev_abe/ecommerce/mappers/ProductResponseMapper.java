@@ -1,9 +1,8 @@
 package kg.dev_abe.ecommerce.mappers;
 
-import kg.dev_abe.ecommerce.dto.response.ProductImageResponse;
 import kg.dev_abe.ecommerce.dto.response.ProductResponse;
-import kg.dev_abe.ecommerce.dto.response.ReviewResponse;
 import kg.dev_abe.ecommerce.models.Product;
+import kg.dev_abe.ecommerce.models.ProductImage;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +30,7 @@ public class ProductResponseMapper implements Function<Product,ProductResponse> 
                 .description(product.getDescription())
                 .imageList(product.getImageList()
                         .stream()
-                        .map(i -> new ProductImageResponse(i.getId(), i.getImageUrl()))
+                        .map(ProductImage::getImageData)
                         .collect(Collectors.toList())
                 )
                 .build();

@@ -46,7 +46,6 @@ public class User implements UserDetails {
         this.email = request.getEmail();
         this.password = request.getPassword1();
         this.phoneNumber = request.getPhoneNumber();
-        this.role = Role.USER;
     }
 
     @Override

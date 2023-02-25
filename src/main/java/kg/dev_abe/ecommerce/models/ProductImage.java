@@ -19,12 +19,11 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_NAME)
     @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME, allocationSize = 1, initialValue = 13)
     private Long id;
-    private String imageUrl;
     @ManyToOne
     private Product product;
 
-    public ProductImage(String imageUrl, Product product) {
-        this.imageUrl = imageUrl;
-        this.product = product;
-    }
+    @Lob
+    private byte[] imageData;
+
+    private String fileType;
 }

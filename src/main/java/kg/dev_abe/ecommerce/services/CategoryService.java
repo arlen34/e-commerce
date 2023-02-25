@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private final CartItemRepository cartItemRepository;
+    private final ProductService productService;
 
     public List<CategoryResponse> getAllCategories() {
 //        return categoryRepository.findAll().stream().map(c -> new CategoryResponse(c.getId(),c.getCategoryName())).collect(Collectors.toList());
@@ -53,14 +53,15 @@ public class CategoryService {
         } else return getSubCategoriesByParentCatId(category.getParentCategory().getId());
     }
 
+    @Transactional
     public List<CategoryResponse> deleteCategory(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
         if (category.getParentCategory() != null) {
-            delete(category.getProducts());
+            category.getProducts().forEach(p -> productService.deleteById(p.getId()));
         } else {
-            for (Category category1 : category.getCategories()) {
-                delete(category1.getProducts());
-            }
+            category.getCategories().forEach((c) -> {
+                c.getProducts().forEach(p -> productService.deleteById(p.getId()));
+            });
         }
         categoryRepository.delete(category);
         if (category.getParentCategory() == null) {
@@ -68,11 +69,5 @@ public class CategoryService {
         } else return getSubCategoriesByParentCatId(category.getParentCategory().getId());
     }
 
-    private void delete(List<Product> products) {
-        for (Product p : products) {
-            for (CartItem c : p.getCartItems()) {
-                cartItemRepository.updateForDelete(c.getId());
-            }
-        }
-    }
+
 }

@@ -23,6 +23,6 @@ public class ProductResponse {
     private Integer amount;
     private String category;
     private List<ReviewResponse> reviews;
-    private List<ProductImageResponse> imageList;
+    private List<byte[]> imageList;
 
 }

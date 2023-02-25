@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductCreateRequest {
     private Long categoryId;
-    private List<ProductImageCreateRequest> imageRequests;
     private String productName;
     private String description;
     private Double price;

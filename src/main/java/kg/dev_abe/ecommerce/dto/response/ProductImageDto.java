@@ -1,16 +1,16 @@
 package kg.dev_abe.ecommerce.dto.response;
 
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
 @AllArgsConstructor
-public class ProductImageResponse {
+public class ProductImageDto {
     private Long id;
-    private String imageUrl;
-
+    private byte[] data;
 }
