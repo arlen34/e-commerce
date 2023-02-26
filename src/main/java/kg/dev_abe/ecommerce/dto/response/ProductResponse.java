@@ -1,14 +1,10 @@
 package kg.dev_abe.ecommerce.dto.response;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import kg.dev_abe.ecommerce.models.Category;
-import kg.dev_abe.ecommerce.models.ProductImage;
-import kg.dev_abe.ecommerce.models.Review;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,6 +19,6 @@ public class ProductResponse {
     private Integer amount;
     private String category;
     private List<ReviewResponse> reviews;
-    private List<byte[]> imageList;
+    private List<ProductImageDto> imageList;
 
 }
