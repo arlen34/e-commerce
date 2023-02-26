@@ -77,20 +77,26 @@ public class ProductService {
     }
 
 
-    public ProductResponse addImage(Long id, MultipartFile file) {
+    public ProductResponse addImages(Long id, MultipartFile[] files) {
             Product product = productRepository.findById(id).orElseThrow(()-> new NotFoundException("Not found"));
-            ProductImage productImage = new ProductImage();
+            List<ProductImage> productImages = new ArrayList<>();
+
             try {
-                productImage.setFileType(file.getContentType());
-                productImage.setImageData(file.getBytes());
-                productImage.setProduct(product);
-                product.getImageList().add(productImage);
+                ProductImage productImage;
+                for (MultipartFile file: files) {
+                    productImage = new ProductImage();
+                    productImage.setFileType(file.getContentType());
+                    productImage.setImageData(file.getBytes());
+                    productImage.setProduct(product);
+                    productImages.add(productImage);
+                }
+                product.getImageList().addAll(productImages);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             productRepository.save(product);
             return productResponseMapper.apply(product);
 
     }
+
 }
