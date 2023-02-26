@@ -36,7 +36,7 @@ public class CategoryController {
 
     @Operation(summary = "Create parent categories or sub categories",
             description = "This endpoint returns the created categories")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PostMapping("/create")
     public List<CategoryResponse> addCategory(@RequestBody CategoryRequest request) {
         return categoryService.create(request);
@@ -44,7 +44,7 @@ public class CategoryController {
 
     @Operation(summary = "Update categories",
             description = "This endpoint returns the updated categories")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PatchMapping
     public List<CategoryResponse> updateCategory(@RequestBody CategoryUpdateRequest request) {
         return categoryService.update(request);
@@ -52,7 +52,7 @@ public class CategoryController {
 
     @Operation(summary = "Delete categories",
             description = "This endpoint returns the delete category")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public List<CategoryResponse> deleteCategory(@PathVariable Long id) {
         return categoryService.deleteCategory(id);

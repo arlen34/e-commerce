@@ -2,8 +2,10 @@ package kg.dev_abe.ecommerce.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kg.dev_abe.ecommerce.dto.request.AddAdminRequest;
 import kg.dev_abe.ecommerce.dto.request.LoginRequest;
 import kg.dev_abe.ecommerce.dto.request.RegisterRequest;
+import kg.dev_abe.ecommerce.dto.response.AddAdminResponse;
 import kg.dev_abe.ecommerce.dto.response.AuthResponse;
 import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.services.UserService;
@@ -33,15 +35,19 @@ public class AuthController {
     public AuthResponse register(@RequestBody RegisterRequest request){
         return userService.register(request);
     }
-
-
+    @Operation(summary = "Add admin", description = "The endpoint returns the added admin")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @PostMapping("/add-admin")
+    public AddAdminResponse addAdmin(@RequestBody AddAdminRequest request){
+        return userService.addAdmin(request);
+    }
 
     @GetMapping("{id}")
     public ResponseEntity <User> getUserById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
     }
 
-    @PreAuthorize(value = "hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @DeleteMapping("{id}")
     public ResponseEntity <String> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);

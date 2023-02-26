@@ -25,11 +25,10 @@ public class ProductController {
 
     @Operation(summary = "Post the new product",
             description = "This endpoint returns a new created product with all products")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PostMapping(path = "/add")
     public List<ProductResponse> addProduct(@RequestBody ProductCreateRequest request) {
         return productService.create(request);
-
     }
 
     @PostMapping(path = "{id}/add-image/", consumes = {"multipart/form-data"})
@@ -55,7 +54,7 @@ public class ProductController {
 
     @Operation(summary = "Update the new product",
             description = "This endpoint returns a updated product with all products")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PatchMapping
     public ProductResponse updateProductById(@RequestBody ProductUpdateRequest request) {
         return productService.updateById(request);
@@ -63,7 +62,7 @@ public class ProductController {
 
     @Operation(summary = "Delete the product",
             description = "This endpoint returns a deleted product with all products")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public List<ProductResponse> deleteProductById(@PathVariable Long id) {
         return productService.deleteById(id);

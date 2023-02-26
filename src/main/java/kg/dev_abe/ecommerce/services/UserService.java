@@ -1,7 +1,9 @@
 package kg.dev_abe.ecommerce.services;
 
+import kg.dev_abe.ecommerce.dto.request.AddAdminRequest;
 import kg.dev_abe.ecommerce.dto.request.LoginRequest;
 import kg.dev_abe.ecommerce.dto.request.RegisterRequest;
+import kg.dev_abe.ecommerce.dto.response.AddAdminResponse;
 import kg.dev_abe.ecommerce.dto.response.AuthResponse;
 import kg.dev_abe.ecommerce.exceptions.BadRequestException;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
@@ -51,15 +53,33 @@ public class UserService {
     }
 
     public User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(()-> new ECommerceException("User not found"));
+        return userRepository.findById(id).orElseThrow(() -> new ECommerceException("User not found"));
     }
+
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
     }
+
     public User updateUserId(Long id, User user) {
         user.setId(id);
         userRepository.save(user);
         return userRepository.save(user);
     }
 
+    public AddAdminResponse addAdmin(AddAdminRequest request) {
+        if (userRepository.existsUserByEmail(request.getEmail())) {
+            throw new BadRequestException("This email: " + request.getEmail() + " is always use!");
+        }
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .phoneNumber(request.getPhoneNumber())
+                .surname(request.getSurname())
+                .name(request.getName())
+                .role(Role.ADMIN)
+                .build();
+        userRepository.save(user);
+        return new AddAdminResponse(user.getId(), user.getEmail(), request.getPassword(), user.getRole(),
+                user.getName(), user.getSurname(), user.getPhoneNumber());
+    }
 }
