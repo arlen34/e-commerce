@@ -13,13 +13,13 @@ import kg.dev_abe.ecommerce.repositories.CartItemRepository;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import kg.dev_abe.ecommerce.repositories.ProductRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -30,24 +30,19 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final CartItemRepository cartItemRepository;
 
-    public List<ProductResponse> create(ProductCreateRequest request) {
+    public Page<ProductResponse> create(ProductCreateRequest request,Pageable pageable) {
         Product product = new Product(request);
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new NotFoundException("The category not found"));
         product.setCategory(category);
-
         productRepository.save(product);
-        return getAllProductsByCategoryId(request.getCategoryId());
+        return getAllProductsByCategoryId(request.getCategoryId(), pageable);
     }
 
 
 
-    public List<ProductResponse> getAllProductsByCategoryId(Long categoryId) {
-        List<ProductResponse> responses = new ArrayList<>();
-        for (Product p : productRepository.getProductsByCategoryId(categoryId)){
-            ProductResponse response = productResponseMapper.apply(p);
-            responses.add(response);
-        }
-        return responses;
+    public Page<ProductResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable){
+
+        return productRepository.findByCategoryId(categoryId, pageable).map(productResponseMapper);
     }
 
 
@@ -66,14 +61,15 @@ public class ProductService {
         return getProductById(product.getId());
     }
 
-    public List<ProductResponse> deleteById(Long id) {
+    public Page<ProductResponse> deleteById(Long id) {
+        Pageable pageable = Pageable.unpaged();
         Product product = productRepository.findById(id).orElseThrow(()-> new NotFoundException("Not found"));
         for (CartItem c : product.getCartItems()){
             cartItemRepository.updateForDelete(c.getId());
         }
         product.getCartItems().forEach(c -> cartItemRepository.updateForDelete(c.getId()));
         productRepository.delete(product);
-        return getAllProductsByCategoryId(product.getCategory().getId());
+        return getAllProductsByCategoryId(product.getCategory().getId(),pageable);
     }
 
 
