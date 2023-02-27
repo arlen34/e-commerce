@@ -1,5 +1,5 @@
 insert into users (id, email, name, surname, password, phone_number, role) VALUES
-                                                                               (1, 'admin@gmail.com', 'Admin', 'Adminov', '$2a$12$MOY3XQCNQzwgv4lFqnpSrey/ELGiXhyTQZRygWVlAwFu3Zxy3zFbu', '0702003550', 'ADMIN'),
+                                                                               (1, 'admin@gmail.com', 'Admin', 'Adminov', '$2a$12$MOY3XQCNQzwgv4lFqnpSrey/ELGiXhyTQZRygWVlAwFu3Zxy3zFbu', '0702003550', 'SUPER_ADMIN'),
                                                                                (2, 'client@gmail.com', 'Client', 'Clientov', '$2a$12$PhRg1tBOK9sA2A8gEa4JZ.lF6yWI5/KKg38CkmNsOSTFWQekA72Y6', '0702010101', 'USER');
 
 insert into categories (id, category_name, parent_category_id) VALUES

@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 @RestController
 @RequestMapping("/api/products")
 @AllArgsConstructor
@@ -27,7 +28,7 @@ public class ProductController {
 
     @Operation(summary = "Post the new product",
             description = "This endpoint returns a new created product with all products")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PostMapping(path = "/add")
     public Page<ProductResponse> addProduct(
             @RequestBody ProductCreateRequest request,
@@ -35,11 +36,13 @@ public class ProductController {
     ) {
 
         return productService.create(request, pageable);
+    public List<ProductResponse> addProduct(@RequestBody ProductCreateRequest request) {
+        return productService.create(request);
     }
 
     @PostMapping(path = "{id}/add-image/", consumes = {"multipart/form-data"})
-    public ResponseEntity<ProductResponse> addImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        return new ResponseEntity<>(productService.addImage(id, file), HttpStatus.OK);
+    public ResponseEntity<ProductResponse> addImage(@PathVariable Long id, @RequestParam("file") MultipartFile[] files) {
+        return new ResponseEntity<>(productService.addImages(id, files), HttpStatus.OK);
     }
 
 
@@ -63,7 +66,7 @@ public class ProductController {
 
     @Operation(summary = "Update the new product",
             description = "This endpoint returns a updated product with all products")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PatchMapping
     public ProductResponse updateProductById(@RequestBody ProductUpdateRequest request) {
         return productService.updateById(request);
@@ -71,7 +74,7 @@ public class ProductController {
 
     @Operation(summary = "Delete the product",
             description = "This endpoint returns a deleted product with all products")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public Page<ProductResponse> deleteProductById(@PathVariable Long id) {
         return productService.deleteById(id);
