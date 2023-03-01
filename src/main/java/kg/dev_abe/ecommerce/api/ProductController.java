@@ -36,9 +36,8 @@ public class ProductController {
     ) {
 
         return productService.create(request, pageable);
-    public List<ProductResponse> addProduct(@RequestBody ProductCreateRequest request) {
-        return productService.create(request);
     }
+
 
     @PostMapping(path = "{id}/add-image/", consumes = {"multipart/form-data"})
     public ResponseEntity<ProductResponse> addImage(@PathVariable Long id, @RequestParam("file") MultipartFile[] files) {
