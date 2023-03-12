@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import kg.dev_abe.ecommerce.dto.request.ProductCreateRequest;
 import kg.dev_abe.ecommerce.dto.request.ProductUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.ProductResponse;
+import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.mappers.ProductResponseMapper;
 import kg.dev_abe.ecommerce.models.CartItem;
 import kg.dev_abe.ecommerce.models.Category;
@@ -32,12 +33,12 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final CartItemRepository cartItemRepository;
 
-    public Page<ProductResponse> create(ProductCreateRequest request,Pageable pageable) {
+    public SimpleResponse create(ProductCreateRequest request) {
         Product product = new Product(request);
         Category category = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new NotFoundException("The category not found"));
         product.setCategory(category);
         productRepository.save(product);
-        return getAllProductsByCategoryId(request.getCategoryId(), pageable);
+        return new SimpleResponse("Successfully added", "SAVE");
     }
 
 
@@ -97,4 +98,7 @@ public class ProductService {
 
     }
 
+    public Page<ProductResponse> searchProduct(String name, Pageable pageable) {
+        return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productResponseMapper);
+    }
 }

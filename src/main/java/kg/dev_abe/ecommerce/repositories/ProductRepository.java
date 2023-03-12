@@ -10,10 +10,8 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     @Query("select p from Product p where p.category.id = ?1")
     Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
 
-    Page<Product> findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-            String name, String description, Pageable pageable);
+    Page<Product> findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description, Pageable pageable);
     @Override
     Page<Product> findAll(Pageable pageable);
-
 
 }
