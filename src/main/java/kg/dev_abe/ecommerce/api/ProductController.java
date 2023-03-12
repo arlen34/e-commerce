@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.ProductCreateRequest;
 import kg.dev_abe.ecommerce.dto.request.ProductUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.ProductResponse;
+import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.services.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,15 +31,14 @@ public class ProductController {
             description = "This endpoint returns a new created product with all products")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PostMapping(path = "/add")
-    public Page<ProductResponse> addProduct(
-            @RequestBody ProductCreateRequest request,
-            @PageableDefault(sort = {"id"},direction = Sort.Direction.DESC) Pageable pageable
-    ) {
-
-        return productService.create(request, pageable);
+    public SimpleResponse addProduct(
+            @RequestBody ProductCreateRequest request) {
+        return productService.create(request);
     }
 
-
+    @Operation(summary = "Add image to product",
+            description = "This endpoint returns a new created product with all products")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PostMapping(path = "{id}/add-image/", consumes = {"multipart/form-data"})
     public ResponseEntity<ProductResponse> addImage(@PathVariable Long id, @RequestParam("file") MultipartFile[] files) {
         return new ResponseEntity<>(productService.addImages(id, files), HttpStatus.OK);
@@ -50,7 +50,7 @@ public class ProductController {
     @GetMapping("/get-all/{categoryId}")
     public Page<ProductResponse> getProductsByCategoryId(
             @PathVariable Long categoryId,
-            @PageableDefault(sort = {"id"},direction = Sort.Direction.DESC,size = 2) Pageable pageable
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, size = 2) Pageable pageable
     ) {
         return productService.getAllProductsByCategoryId(categoryId, pageable);
     }
@@ -77,5 +77,15 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public Page<ProductResponse> deleteProductById(@PathVariable Long id) {
         return productService.deleteById(id);
+    }
+
+    @Operation(summary = "Search by product name",
+            description = "This endpoint returns a searched products")
+    @GetMapping("/search")
+    public Page<ProductResponse> searchProduct(
+            @RequestParam String name,
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, size = 2) Pageable pageable
+    ) {
+        return productService.searchProduct(name, pageable);
     }
 }
