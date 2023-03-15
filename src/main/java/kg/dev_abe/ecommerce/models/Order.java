@@ -29,6 +29,6 @@ public class Order {
     private User user;
 
     private LocalDate orderDate;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order")
-    private List<OrderItem> orderItems = new ArrayList<>();
+    @ManyToMany
+    private List<CartItem> orderItems = new ArrayList<>();
 }

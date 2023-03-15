@@ -29,9 +29,10 @@ import java.util.List;
 @Transactional
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ProductResponseMapper productResponseMapper;
+    private final ProductResponseMapper productResponseMapper = ProductResponseMapper.INSTANCE;
     private final CategoryRepository categoryRepository;
     private final CartItemRepository cartItemRepository;
+
 
     public SimpleResponse create(ProductCreateRequest request) {
         Product product = new Product(request);
@@ -45,13 +46,13 @@ public class ProductService {
 
     public Page<ProductResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable){
 
-        return productRepository.findByCategoryId(categoryId, pageable).map(productResponseMapper);
+        return productRepository.findByCategoryId(categoryId, pageable).map(productResponseMapper::toProductResponse);
     }
 
 
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product was not found"));
-        return productResponseMapper.apply(product);
+        return productResponseMapper.toProductResponse(product);
     }
 
     @Transactional
@@ -94,11 +95,11 @@ public class ProductService {
                 e.printStackTrace();
             }
             productRepository.save(product);
-            return productResponseMapper.apply(product);
+            return productResponseMapper.toProductResponse(product);
 
     }
 
     public Page<ProductResponse> searchProduct(String name, Pageable pageable) {
-        return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productResponseMapper);
+        return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productResponseMapper::toProductResponse);
     }
 }
