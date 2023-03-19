@@ -11,5 +11,5 @@ public interface ProductImageMapper {
 
     ProductImageMapper INSTANCE = Mappers.getMapper(ProductImageMapper.class);
     @Mapping(source = "imageData", target = "data")
-    ProductImageDto ProductImage(ProductImage productImage);
+    ProductImageDto toProductImageDto(ProductImage productImage);
 }

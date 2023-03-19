@@ -12,14 +12,12 @@ import java.util.function.Function;
 
 @Mapper(componentModel = "spring")
 public interface ReviewMapper {
-
     ReviewMapper INSTANCE = Mappers.getMapper(ReviewMapper.class);
     @Mapping(target = "fullName", expression = "java(review.getUser().getName() + \" \" + review.getUser().getSurname())")
-    ReviewResponse getReviewResponse(Review review);
+    ReviewResponse toReviewResponse(Review review);
 
-    //write opposite mapper
     @Mapping(source = "fullName", target = "user.name")
     @Mapping(expression = "java(\"\")", target = "user.surname")
-    Review toReviewResponse(ReviewResponse reviewDTO);
+    Review toReview(ReviewResponse reviewDTO);
 
 }
