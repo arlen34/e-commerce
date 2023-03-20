@@ -29,7 +29,7 @@ import java.util.List;
 @Transactional
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ProductResponseMapper productResponseMapper = ProductResponseMapper.INSTANCE;
+    private final ProductResponseMapper productResponseMapper;
     private final CategoryRepository categoryRepository;
     private final CartItemRepository cartItemRepository;
 

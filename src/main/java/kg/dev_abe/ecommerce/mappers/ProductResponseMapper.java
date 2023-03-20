@@ -9,7 +9,6 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", uses = {ProductImageMapper.class, ReviewMapper.class})
 public interface ProductResponseMapper {
-    ProductResponseMapper INSTANCE = Mappers.getMapper(ProductResponseMapper.class);
 
     @Mapping(target = "reviews", source = "reviews")
     @Mapping(target = "imageList", source = "imageList")

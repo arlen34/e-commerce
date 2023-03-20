@@ -12,7 +12,6 @@ import java.util.function.Function;
 
 @Mapper(componentModel = "spring")
 public interface ReviewMapper {
-    ReviewMapper INSTANCE = Mappers.getMapper(ReviewMapper.class);
     @Mapping(target = "fullName", expression = "java(review.getUser().getName() + \" \" + review.getUser().getSurname())")
     ReviewResponse toReviewResponse(Review review);
 

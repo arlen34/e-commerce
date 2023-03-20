@@ -9,7 +9,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface ProductImageMapper {
 
-    ProductImageMapper INSTANCE = Mappers.getMapper(ProductImageMapper.class);
     @Mapping(source = "imageData", target = "data")
     ProductImageDto toProductImageDto(ProductImage productImage);
 }
