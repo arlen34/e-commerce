@@ -7,6 +7,7 @@ import kg.dev_abe.ecommerce.dto.response.AddAdminResponse;
 import kg.dev_abe.ecommerce.dto.response.AuthResponse;
 import kg.dev_abe.ecommerce.exceptions.BadRequestException;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
+import kg.dev_abe.ecommerce.models.Cart;
 import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.models.enums.Role;
 import kg.dev_abe.ecommerce.repositories.UserRepository;
@@ -43,7 +44,6 @@ public class UserService {
             User user = new User(request);
             user.setPassword(passwordEncoder.encode(request.getPassword1()));
             user.setRole(Role.USER);
-
             userRepository.save(user);
             String token = jwtUtils.generateToken(user.getEmail());
 
