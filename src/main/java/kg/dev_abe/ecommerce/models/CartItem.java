@@ -1,10 +1,7 @@
 package kg.dev_abe.ecommerce.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -12,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "cart_items")
+@Builder
 public class CartItem {
     private static final String SEQ_NAME = "cart_item_seq";
 
