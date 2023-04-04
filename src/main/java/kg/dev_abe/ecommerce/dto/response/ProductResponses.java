@@ -2,6 +2,8 @@ package kg.dev_abe.ecommerce.dto.response;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,6 +14,6 @@ public class ProductResponses {
     private Double price;
     private String category;
     private Integer reviewsCount;
-
+    private List<ProductImageDto> productImageDto;
 
 }
