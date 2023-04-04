@@ -1,5 +1,6 @@
 package kg.dev_abe.ecommerce.repositories;
 
+import kg.dev_abe.ecommerce.models.Cart;
 import kg.dev_abe.ecommerce.models.CartItem;
 import kg.dev_abe.ecommerce.models.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,8 +16,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     @Query("delete from CartItem where id = ?1")
     void updateForDelete(Long id);
 
-    CartItem findByProductId(Long id);
-
     CartItem findByProductIdAndAndCart_Id(Long productId, Long cartId);
 
+    List<CartItem> findByCart(Cart cart);
 }
