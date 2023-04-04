@@ -44,7 +44,6 @@ public class ProductService {
 
 
     public Page<ProductResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable){
-
         return productRepository.findByCategoryId(categoryId, pageable).map(productResponseMapper);
     }
 
