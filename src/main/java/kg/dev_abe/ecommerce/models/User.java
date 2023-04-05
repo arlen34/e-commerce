@@ -32,8 +32,6 @@ public class User implements UserDetails {
     private String name;
     @NotBlank
     private String surname;
-
-//    @Min(8)
     private String password;
     @NotBlank
     private String phoneNumber;

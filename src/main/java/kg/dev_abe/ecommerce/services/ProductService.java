@@ -12,6 +12,7 @@ import kg.dev_abe.ecommerce.models.Product;
 import kg.dev_abe.ecommerce.models.ProductImage;
 import kg.dev_abe.ecommerce.repositories.CartItemRepository;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
+import kg.dev_abe.ecommerce.repositories.ProductImageRepository;
 import kg.dev_abe.ecommerce.repositories.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import org.webjars.NotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -32,7 +34,7 @@ public class ProductService {
     private final ProductResponseMapper productResponseMapper;
     private final CategoryRepository categoryRepository;
     private final CartItemRepository cartItemRepository;
-
+    private final ProductImageRepository productImageRepository;
 
     public SimpleResponse create(ProductCreateRequest request) {
         Product product = new Product(request);
@@ -101,5 +103,12 @@ public class ProductService {
 
     public Page<ProductResponse> searchProduct(String name, Pageable pageable) {
         return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productResponseMapper::toProductResponse);
+    }
+
+    public ProductResponse deleteImage(Long productId,Long imageId) {
+        Product product = productRepository.findById(productId).get();
+        product.getImageList().remove(productImageRepository.findById(imageId).get());
+        productRepository.save(product);
+        return productResponseMapper.toProductResponse(product);
     }
 }

@@ -1,13 +1,11 @@
 package kg.dev_abe.ecommerce.services;
 
 import kg.dev_abe.ecommerce.dto.response.CartItemResponse;
-import kg.dev_abe.ecommerce.dto.response.ProductResponses;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
 import kg.dev_abe.ecommerce.mappers.ProductResponseMapper;
 import kg.dev_abe.ecommerce.models.Cart;
 import kg.dev_abe.ecommerce.models.CartItem;
-import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.repositories.CartItemRepository;
 import kg.dev_abe.ecommerce.repositories.CartRepository;
 import kg.dev_abe.ecommerce.repositories.ProductRepository;
@@ -16,9 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -33,8 +29,10 @@ public class CartService {
 
     public SimpleResponse addToCart(Long productId, Principal principal) {
         Cart cart = cartRepository.findByUserEmail(principal.getName());
-        if (!cartRepository.existsById(cart.getId())) {
+
+        if (cart ==null || !cartRepository.existsById(cart.getId())) {
             cart = Cart.builder().user(userRepository.findByEmail(principal.getName()).get()).build();
+            cartRepository.save(cart);
         }
         CartItem cartItem = itemRepository.findByProductIdAndAndCart_Id(productId, cart.getId());
         if (cartItem != null && cartItem.getCart() == cart) {
@@ -61,15 +59,5 @@ public class CartService {
                         cartItem.getId(),
                         cartItem.getQuantity(),
                         responseMapper.getProductsFromCart(cartItem))).toList();
-//                        new ProductResponses(
-//                                cartItem.getProduct().getId(),
-//                                cartItem.getProduct().getProductName(),
-//                                cartItem.getProduct().getDescription(),
-//                                cartItem.getProduct().getPrice(),
-//                                cartItem.getProduct().getCategory().getCategoryName(),
-//                                cartItem.getProduct().getReviews().size(),
-////                        productResponse.imageList( productImageListToProductImageDtoList( product.getImageList() ) );
-//                        ))).toList();
-//        return null;
     }
 }

@@ -44,6 +44,13 @@ public class ProductController {
         return new ResponseEntity<>(productService.addImages(id, files), HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete image from product",description = "This endpoint delete image from product")
+    @PreAuthorize("hasAuthority('ADMIN','SUPER_ADMIN')")
+    @DeleteMapping(path ="{id}/delete/" )
+    public ResponseEntity<ProductResponse> deleteImage(@PathVariable Long productId,Long imageId) {
+        return new ResponseEntity<>(productService.deleteImage(productId,imageId),HttpStatus.OK);
+    }
+
 
     @Operation(summary = "Get all products",
             description = "This endpoint returns all products")
