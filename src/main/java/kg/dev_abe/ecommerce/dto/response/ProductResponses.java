@@ -14,6 +14,6 @@ public class ProductResponses {
     private Double price;
     private String category;
     private Integer reviewsCount;
-    private List<ProductImageDto> productImageDto;
+    private ProductImageDto productImageDto;
 
 }
