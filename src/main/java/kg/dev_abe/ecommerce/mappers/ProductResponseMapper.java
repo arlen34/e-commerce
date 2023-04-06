@@ -21,7 +21,7 @@ public interface ProductResponseMapper {
     @Mapping(target = "description", source = "product.description")
     @Mapping(target = "price", source = "product.price")
     @Mapping(target = "reviewsCount", expression = "java(cartItem.getProduct().getReviews().size())")
-    @Mapping(target = "productImageDto", source = "product")
+    @Mapping(target = "productImageDto", source = "product.imageList")
     ProductResponses getProductsFromCart(CartItem cartItem);
 
     default ProductImageDto toProductImageDto(List<ProductImage> imageList) {
