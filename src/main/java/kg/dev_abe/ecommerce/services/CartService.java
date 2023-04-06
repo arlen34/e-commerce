@@ -1,5 +1,6 @@
 package kg.dev_abe.ecommerce.services;
 
+import jakarta.transaction.Transactional;
 import kg.dev_abe.ecommerce.dto.response.CartItemResponse;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class CartService {
 
     private final UserRepository userRepository;
