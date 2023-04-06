@@ -39,15 +39,15 @@ public class ProductController {
     @Operation(summary = "Add image to product",
             description = "This endpoint returns a new created product with all products")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
-    @PostMapping(path = "{id}/add-image/", consumes = {"multipart/form-data"})
+    @PostMapping(path = "/{id}/add-image", consumes = {"multipart/form-data"})
     public ResponseEntity<ProductResponse> addImage(@PathVariable Long id, @RequestParam("file") MultipartFile[] files) {
         return new ResponseEntity<>(productService.addImages(id, files), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete image from product",description = "This endpoint delete image from product")
-    @PreAuthorize("hasAuthority('ADMIN','SUPER_ADMIN')")
-    @DeleteMapping(path ="{id}/delete/" )
-    public ResponseEntity<ProductResponse> deleteImage(@PathVariable Long productId,Long imageId) {
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
+    @DeleteMapping(path ="/{id}/delete" )
+    public ResponseEntity<ProductResponse> deleteImage(@PathVariable(name = "id") Long productId,Long imageId) {
         return new ResponseEntity<>(productService.deleteImage(productId,imageId),HttpStatus.OK);
     }
 
