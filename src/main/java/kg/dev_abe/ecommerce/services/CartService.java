@@ -60,4 +60,9 @@ public class CartService {
                         cartItem.getQuantity(),
                         responseMapper.getProductsFromCart(cartItem))).toList();
     }
+
+    public SimpleResponse deleteCart(Long id){
+        itemRepository.updateForDelete(id);
+        return new SimpleResponse("The cart successfully deleted", "DELETE");
+    }
 }

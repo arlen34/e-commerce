@@ -40,4 +40,10 @@ public class CartController {
     public List<CartItemResponse> getCartItems(Principal principal) {
         return cartService.getCartItems(principal);
     }
+    @Operation(summary = "Delete your cart by id",
+            description = "This endpoint returns the message about deleted cart")
+    @DeleteMapping("/{id}")
+    public SimpleResponse delete(@PathVariable Long id){
+        return cartService.deleteCart(id);
+    }
 }

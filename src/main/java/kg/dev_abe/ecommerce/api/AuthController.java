@@ -42,20 +42,20 @@ public class AuthController {
         return userService.addAdmin(request);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity <User> getUserById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity <String> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
 
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity <User> updateUserId(@PathVariable Long id, @RequestBody User user) {
         return new ResponseEntity<>(userService.updateUserId(id, user), HttpStatus.OK);
     }
