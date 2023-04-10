@@ -25,10 +25,7 @@ public interface ProductResponseMapper {
     ProductResponses getProductsFromCart(CartItem cartItem);
 
     default ProductImageDto toProductImageDto(List<ProductImage> imageList) {
-        if (imageList != null && !imageList.isEmpty()) {
-            return ProductImageMapper.INSTANCE.toProductImageDto(imageList.get(0));
-        }
-        return null;
+        return imageList != null && !imageList.isEmpty() ? ProductImageMapper.INSTANCE.toProductImageDto(imageList.get(0)) : null;
     }
 
 }
