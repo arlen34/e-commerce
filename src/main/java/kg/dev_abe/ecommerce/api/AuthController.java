@@ -10,53 +10,65 @@ import kg.dev_abe.ecommerce.dto.response.AuthResponse;
 import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.services.UserService;
 import lombok.AllArgsConstructor;
+import org.mapstruct.control.MappingControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/user")
 @CrossOrigin(origins = "*", maxAge = 3600)
-@Tag(name = "Authentication API",description = "The authentication API (for authentication)")
+@Tag(name = "Authentication API", description = "The authentication API (for authentication)")
 public class AuthController {
     private UserService userService;
 
     @Operation(summary = "Retrieve Authentication Token",
             description = "This endpoint returns a JWT for authenticating further requests to the API")
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest request){
+    public AuthResponse login(@RequestBody LoginRequest request) {
         return userService.login(request);
     }
 
     @Operation(summary = "Registration", description = "The endpoint for register user")
     @PostMapping("/register")
-    public AuthResponse register(@RequestBody RegisterRequest request){
+    public AuthResponse register(@RequestBody RegisterRequest request) {
         return userService.register(request);
     }
+
     @Operation(summary = "Add admin", description = "The endpoint returns the added admin")
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @PostMapping("/add-admin")
-    public AddAdminResponse addAdmin(@RequestBody AddAdminRequest request){
+    public AddAdminResponse addAdmin(@RequestBody AddAdminRequest request) {
         return userService.addAdmin(request);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity <User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity <String> deleteUserById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
         return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    @GetMapping("/all")
+    public List<ResponseEntity<User>> getAllUsers() {
+        return userService.getUsers().stream().map(ResponseEntity::ok).collect(Collectors.toList());
+    }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity <User> updateUserId(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<User> updateUserId(@PathVariable Long id, @RequestBody User user) {
         return new ResponseEntity<>(userService.updateUserId(id, user), HttpStatus.OK);
     }
 
