@@ -10,7 +10,6 @@
     </parent>
 
 
-
     <groupId>kg.dev_abe</groupId>
     <artifactId>e-commerce</artifactId>
     <version>0.0.1-SNAPSHOT</version>
