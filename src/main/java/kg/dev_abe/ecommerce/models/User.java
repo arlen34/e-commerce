@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,7 +38,10 @@ public class User implements UserDetails {
     private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Role role;
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Order> orderList;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Cart cart;
     public User(RegisterRequest request){
         this.name = request.getName();
         this.surname = request.getSurname();

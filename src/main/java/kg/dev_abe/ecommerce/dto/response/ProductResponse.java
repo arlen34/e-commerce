@@ -1,24 +1,18 @@
 package kg.dev_abe.ecommerce.dto.response;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-
-import java.util.List;
 
 @Getter
 @Setter
-@ToString
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductResponse {
     private Long id;
     private String productName;
-    private String description;
     private Double price;
-    private Integer amount;
-    private String category;
-    private List<ReviewResponse> reviews;
-    private List<ProductImageDto> imageList;
+    private ProductImageDto productImageDto;
 
 }

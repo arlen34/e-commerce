@@ -38,6 +38,8 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<CartItem> cartItems;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    private List<OrderItem> orderItems;
 
     public Product(ProductCreateRequest request) {
         this.productName = request.getProductName();

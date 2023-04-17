@@ -9,8 +9,6 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-
-
     <groupId>kg.dev_abe</groupId>
     <artifactId>e-commerce</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -25,6 +23,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <dependency>
@@ -48,7 +50,7 @@
 
         <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>8.0.0.Final</version>
         </dependency>
@@ -105,8 +107,17 @@
             <version>2.0.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.0.11.RELEASE</version>
+        </dependency>
 
-
+        <dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf</artifactId>
+            <version>9.1.20</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -124,17 +135,15 @@
                             <artifactId>lombok</artifactId>
                             <version>1.18.26</version>
                         </path>
-
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>1.18.26</version>
-                        </path>
-
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
                             <version>1.5.3.Final</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

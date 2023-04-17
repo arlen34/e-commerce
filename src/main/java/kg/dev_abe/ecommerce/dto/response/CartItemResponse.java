@@ -8,10 +8,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class CartItemResponse {
-    private Long id;
-    private Integer quantity;
-    private ProductResponses productResponses;
+    private long cartItemId;
+    private int quantity;
+    private ProductResponse productResponse;
+    private double totalPrice;
+
 }

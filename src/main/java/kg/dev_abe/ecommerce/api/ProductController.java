@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.ProductCreateRequest;
 import kg.dev_abe.ecommerce.dto.request.ProductUpdateRequest;
-import kg.dev_abe.ecommerce.dto.response.ProductResponse;
+import kg.dev_abe.ecommerce.dto.response.ProductDetailsResponse;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.services.ProductService;
 import lombok.AllArgsConstructor;
@@ -40,14 +40,14 @@ public class ProductController {
             description = "This endpoint returns a new created product with all products")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PostMapping(path = "/{id}/add-image", consumes = {"multipart/form-data"})
-    public ResponseEntity<ProductResponse> addImage(@PathVariable Long id, @RequestParam("file") MultipartFile[] files) {
+    public ResponseEntity<ProductDetailsResponse> addImage(@PathVariable Long id, @RequestParam("file") MultipartFile[] files) {
         return new ResponseEntity<>(productService.addImages(id, files), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete image from product",description = "This endpoint delete image from product")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @DeleteMapping(path ="/{id}/delete" )
-    public ResponseEntity<ProductResponse> deleteImage(@PathVariable(name = "id") Long productId,Long imageId) {
+    public ResponseEntity<ProductDetailsResponse> deleteImage(@PathVariable(name = "id") Long productId, Long imageId) {
         return new ResponseEntity<>(productService.deleteImage(productId,imageId),HttpStatus.OK);
     }
 
@@ -55,7 +55,7 @@ public class ProductController {
     @Operation(summary = "Get all products",
             description = "This endpoint returns all products")
     @GetMapping("/get-all/{categoryId}")
-    public Page<ProductResponse> getProductsByCategoryId(
+    public Page<ProductDetailsResponse> getProductsByCategoryId(
             @PathVariable Long categoryId,
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, size = 2) Pageable pageable
     ) {
@@ -65,7 +65,7 @@ public class ProductController {
     @Operation(summary = "Get a product by id",
             description = "This endpoint returns product by product id")
     @GetMapping("/{id}")
-    public ProductResponse getProductById(@PathVariable Long id) {
+    public ProductDetailsResponse getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
     }
 
@@ -74,7 +74,7 @@ public class ProductController {
             description = "This endpoint returns a updated product with all products")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PatchMapping
-    public ProductResponse updateProductById(@RequestBody ProductUpdateRequest request) {
+    public ProductDetailsResponse updateProductById(@RequestBody ProductUpdateRequest request) {
         return productService.updateById(request);
     }
 
@@ -82,14 +82,14 @@ public class ProductController {
             description = "This endpoint returns a deleted product with all products")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @DeleteMapping("/{id}")
-    public Page<ProductResponse> deleteProductById(@PathVariable Long id) {
+    public Page<ProductDetailsResponse> deleteProductById(@PathVariable Long id) {
         return productService.deleteById(id);
     }
 
     @Operation(summary = "Search by product name",
             description = "This endpoint returns a searched products")
     @GetMapping("/search")
-    public Page<ProductResponse> searchProduct(
+    public Page<ProductDetailsResponse> searchProduct(
             @RequestParam String name,
             @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC, size = 2) Pageable pageable
     ) {
