@@ -2,7 +2,6 @@ package kg.dev_abe.ecommerce.repositories;
 
 import kg.dev_abe.ecommerce.models.Cart;
 import kg.dev_abe.ecommerce.models.CartItem;
-import kg.dev_abe.ecommerce.models.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

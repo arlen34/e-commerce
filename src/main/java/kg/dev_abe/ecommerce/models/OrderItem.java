@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@Builder
 @Entity
 public class OrderItem {
     private static final String SEQ_NAME = "order_item_seq";

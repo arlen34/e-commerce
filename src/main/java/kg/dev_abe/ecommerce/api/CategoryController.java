@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.CategoryRequest;
 import kg.dev_abe.ecommerce.dto.request.CategoryUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
-import kg.dev_abe.ecommerce.models.Category;
 import kg.dev_abe.ecommerce.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

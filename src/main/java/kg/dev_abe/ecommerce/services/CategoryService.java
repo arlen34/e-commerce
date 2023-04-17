@@ -4,19 +4,13 @@ import jakarta.transaction.Transactional;
 import kg.dev_abe.ecommerce.dto.request.CategoryRequest;
 import kg.dev_abe.ecommerce.dto.request.CategoryUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
-import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
-import kg.dev_abe.ecommerce.models.CartItem;
 import kg.dev_abe.ecommerce.models.Category;
-import kg.dev_abe.ecommerce.models.Product;
-import kg.dev_abe.ecommerce.repositories.CartItemRepository;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
-import kg.dev_abe.ecommerce.repositories.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.security.NoSuchProviderException;
 import java.util.Properties;
 
 @Configuration
@@ -39,7 +38,7 @@ public class MailSenderConfig {
 
     @SneakyThrows
     @Bean
-    public Transport transport() throws NoSuchProviderException {
+    public Transport transport() {
         return session().getTransport();
     }
 }

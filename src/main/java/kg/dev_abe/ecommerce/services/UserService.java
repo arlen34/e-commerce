@@ -7,7 +7,6 @@ import kg.dev_abe.ecommerce.dto.response.AddAdminResponse;
 import kg.dev_abe.ecommerce.dto.response.AuthResponse;
 import kg.dev_abe.ecommerce.exceptions.BadRequestException;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
-import kg.dev_abe.ecommerce.models.Cart;
 import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.models.enums.Role;
 import kg.dev_abe.ecommerce.repositories.UserRepository;
@@ -57,7 +56,9 @@ public class UserService {
     public User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new ECommerceException("User not found"));
     }
-
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new ECommerceException("User not found"));
+    }
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
     }

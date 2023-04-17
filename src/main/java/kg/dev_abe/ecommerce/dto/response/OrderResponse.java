@@ -1,7 +1,6 @@
 package kg.dev_abe.ecommerce.dto.response;
 
 
-import kg.dev_abe.ecommerce.models.OrderItem;
 import kg.dev_abe.ecommerce.models.enums.OrderStatus;
 import lombok.*;
 

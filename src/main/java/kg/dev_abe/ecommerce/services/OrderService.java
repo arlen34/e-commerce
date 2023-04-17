@@ -1,6 +1,7 @@
 package kg.dev_abe.ecommerce.services;
 
 import kg.dev_abe.ecommerce.dto.request.OrderRequest;
+import kg.dev_abe.ecommerce.dto.request.OrderRequestFromCart;
 import kg.dev_abe.ecommerce.dto.response.OrderResponse;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
@@ -9,11 +10,12 @@ import kg.dev_abe.ecommerce.mappers.OrderItemMapper;
 import kg.dev_abe.ecommerce.mappers.OrderMapper;
 import kg.dev_abe.ecommerce.models.Order;
 import kg.dev_abe.ecommerce.models.OrderItem;
+import kg.dev_abe.ecommerce.models.Product;
 import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.models.enums.OrderStatus;
 import kg.dev_abe.ecommerce.repositories.CartItemRepository;
 import kg.dev_abe.ecommerce.repositories.OrderRepository;
-import kg.dev_abe.ecommerce.repositories.UserRepository;
+import kg.dev_abe.ecommerce.repositories.ProductRepository;
 import kg.dev_abe.ecommerce.util.InvoiceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
@@ -39,7 +40,8 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderService {
     private OrderRepository orderRepository;
-    private UserRepository userRepository;
+    private UserService userService;
+    private ProductRepository productRepository;
     private CartItemRepository cartItemRepository;
     private OrderMapper orderMapper;
     private OrderItemMapper orderItemMapper;
@@ -60,14 +62,22 @@ public class OrderService {
     }
 
 
-    public SimpleResponse placeOrder(Principal principal, OrderRequest orderRequest) {
-        User user = userRepository.findByEmail(principal.getName()).orElseThrow();
+    public SimpleResponse placeOrder(Principal principal, OrderRequestFromCart orderRequest) {
+        User user = userService.findUserByEmail(principal.getName());
 
         List<OrderItem> orderItems = orderRequest.getCartItemIds().stream()
                 .map(id -> cartItemRepository.findById(id).get())
                 .map(orderItemMapper::toOrderItem)
                 .toList();
 
+        saveOrder(user, orderItems);
+
+        emailService.sendEmail(user.getEmail(), "Order placing", "Your order placed successfully");
+
+        return new SimpleResponse("Order placed successfully", "Saved");
+    }
+
+    private void saveOrder(User user, List<OrderItem> orderItems) {
         Order order = Order.builder()
                 .user(user)
                 .orderStatus(OrderStatus.AWAITING)
@@ -84,9 +94,28 @@ public class OrderService {
         });
 
         orderRepository.save(order);
-        userRepository.save(user);
+    }
 
-        user.getCart().getCartItems().clear();
+
+    //write create order from OrderRequest
+    public SimpleResponse createOrder(OrderRequest orderRequest, Principal principal) {
+        User user = userService.findUserByEmail(principal.getName());
+
+        List<OrderItem> orderItems = orderRequest.getOrderItems().stream()
+                .map((orderItem) -> {
+                    Product product = productRepository.findById(orderItem.getProductId()).orElseThrow(() -> new NotFoundException("Product not found"));
+                    if (product.getAmount() < orderItem.getQuantity()) {
+                        throw new ECommerceException("Not enough product in stock");
+                    }
+                    return OrderItem.builder()
+                            .product(product)
+                            .quantity(orderItem.getQuantity())
+                            .totalPrice(product.getPrice() * orderItem.getQuantity())
+                            .build();
+                }).toList();
+
+
+        saveOrder(user, orderItems);
 
         emailService.sendEmail(user.getEmail(), "Order placing", "Your order placed successfully");
 
@@ -115,30 +144,32 @@ public class OrderService {
         emailService.sendEmail(order.getUser().getEmail(), "Order cancellation", "Your order canceled successfully");
     }
 
+    //write confirm order method
     @Async
-    public void completeOrder(Long orderId) {
+    public void confirmOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
         if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELED)
-            order.setOrderStatus(OrderStatus.COMPLETED);
+            throw new ECommerceException("Order already completed or canceled");
 
+        order.getOrderItems().forEach((orderItem) -> orderItem.getProduct().setAmount(orderItem.getProduct().getAmount() - orderItem.getQuantity()));
+        order.setOrderStatus(OrderStatus.CONFIRMED);
         orderRepository.save(order);
-        emailService.sendEmail(order.getUser().getEmail(), "Order completed successfully", "Your order completed successfully");
+
+        emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
+
+        new SimpleResponse("Order confirmed successfully", "Confirmed");
     }
 
 
     public ResponseEntity<byte[]> generateInvoice(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
         byte[] pdfBytes;
-        try {
-            pdfBytes = invoiceGenerator.generateInvoice(order);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        pdfBytes = invoiceGenerator.generateInvoice(order);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "order-invoice.pdf");
 
-        return new ResponseEntity<>(pdfBytes,headers,HttpStatus.OK);
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }
 

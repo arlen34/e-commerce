@@ -6,11 +6,8 @@ import kg.dev_abe.ecommerce.models.Order;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
@@ -23,7 +20,7 @@ public class InvoiceGenerator {
     private static final String ORDER_TEMPLATE = "order-template";
     private SpringTemplateEngine templateEngine;
 
-    public byte[] generateInvoice(Order order) throws IOException {
+    public byte[] generateInvoice(Order order) {
         String html = parseThymeleafTemplate(order);
         return generatePdfFromHtml(html);
     }

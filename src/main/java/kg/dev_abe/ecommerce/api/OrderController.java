@@ -3,12 +3,12 @@ package kg.dev_abe.ecommerce.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.OrderRequest;
+import kg.dev_abe.ecommerce.dto.request.OrderRequestFromCart;
 import kg.dev_abe.ecommerce.dto.response.OrderResponse;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.services.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.MalformedURLException;
 import java.security.Principal;
 import java.util.List;
 
@@ -44,20 +43,24 @@ public class OrderController {
     @SneakyThrows
     @GetMapping("{orderId}/generate-invoice")
     @Operation(summary = "Generate invoice file", description = "This endpoint return invoice file for order")
-    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId)  {
+    public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId) {
         return orderService.generateInvoice(orderId);
     }
+
+    @Operation(summary = "Place order", description = "This endpoint place order from cart")
     @PostMapping("/place-order")
-    public SimpleResponse placeOrder(@RequestBody OrderRequest orderRequest, Principal principal) {
+    public SimpleResponse placeOrder(@RequestBody OrderRequestFromCart orderRequest, Principal principal) {
         return orderService.placeOrder(principal, orderRequest);
     }
-
+    @Operation(summary = "Create order from admin panel", description = "This endpoint create order")
+    @PostMapping("/create-order")
+    public SimpleResponse createOrder(@RequestBody OrderRequest orderRequest, Principal principal) {
+        return orderService.createOrder(orderRequest, principal);
+    }
     @Operation(summary = "Get all orders", description = "This endpoint returns all orders")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all-orders")
-    public Page<OrderResponse> getAllOrders(
-            @PageableDefault(sort = "orderId", direction = Sort.Direction.DESC) Pageable pageable
-    ) {
+    public Page<OrderResponse> getAllOrders(@PageableDefault(sort = "orderId", direction = Sort.Direction.DESC) Pageable pageable) {
         return orderService.getAllOrders(pageable);
     }
 
@@ -75,7 +78,11 @@ public class OrderController {
         orderService.cancelOrder(orderId);
     }
 
-
+    @PostMapping("/{orderId}/confirm")
+    @Operation(summary = "Confirm order", description = "This endpoint confirm order by id")
+    public void confirmOrder(@PathVariable Long orderId) {
+        orderService.confirmOrder(orderId);
+    }
 
 
 }

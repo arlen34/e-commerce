@@ -4,10 +4,6 @@ import kg.dev_abe.ecommerce.dto.response.ReviewResponse;
 import kg.dev_abe.ecommerce.models.Review;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
-import org.springframework.stereotype.Component;
-
-import java.util.function.Function;
 
 
 @Mapper(componentModel = "spring")

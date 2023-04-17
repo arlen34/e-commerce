@@ -10,13 +10,11 @@ import kg.dev_abe.ecommerce.dto.response.AuthResponse;
 import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.services.UserService;
 import lombok.AllArgsConstructor;
-import org.mapstruct.control.MappingControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

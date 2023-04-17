@@ -36,7 +36,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         Optional<String> optionalJwt = getJwtFromRequest(request);
         optionalJwt.ifPresent(token ->{String email = jwtUtils.validateJWTToken(token);
-            User user = userRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException(String.format("Please write existing email")));
+            User user = userRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("Please write existing email"));
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
