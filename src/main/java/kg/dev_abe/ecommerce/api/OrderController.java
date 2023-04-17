@@ -43,7 +43,7 @@ public class OrderController {
 
     @SneakyThrows
     @GetMapping("{orderId}/generate-invoice")
-    @Operation(summary = "Place order", description = "This endpoint return invoice file for order")
+    @Operation(summary = "Generate invoice file", description = "This endpoint return invoice file for order")
     public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId)  {
         return orderService.generateInvoice(orderId);
     }
