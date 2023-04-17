@@ -3,9 +3,9 @@ package kg.dev_abe.ecommerce.services;
 import jakarta.transaction.Transactional;
 import kg.dev_abe.ecommerce.dto.request.ProductCreateRequest;
 import kg.dev_abe.ecommerce.dto.request.ProductUpdateRequest;
-import kg.dev_abe.ecommerce.dto.response.ProductResponse;
+import kg.dev_abe.ecommerce.dto.response.ProductDetailsResponse;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
-import kg.dev_abe.ecommerce.mappers.ProductResponseMapper;
+import kg.dev_abe.ecommerce.mappers.ProductDetailsResponseMapper;
 import kg.dev_abe.ecommerce.models.CartItem;
 import kg.dev_abe.ecommerce.models.Category;
 import kg.dev_abe.ecommerce.models.Product;
@@ -24,14 +24,13 @@ import org.webjars.NotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 @Transactional
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ProductResponseMapper productResponseMapper;
+    private final ProductDetailsResponseMapper productDetailsResponseMapper;
     private final CategoryRepository categoryRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductImageRepository productImageRepository;
@@ -46,19 +45,19 @@ public class ProductService {
 
 
 
-    public Page<ProductResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable){
+    public Page<ProductDetailsResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable){
 
-        return productRepository.findByCategoryId(categoryId, pageable).map(productResponseMapper::toProductResponse);
+        return productRepository.findByCategoryId(categoryId, pageable).map(productDetailsResponseMapper::toProductResponse);
     }
 
 
-    public ProductResponse getProductById(Long id) {
+    public ProductDetailsResponse getProductById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product was not found"));
-        return productResponseMapper.toProductResponse(product);
+        return productDetailsResponseMapper.toProductResponse(product);
     }
 
     @Transactional
-    public ProductResponse updateById(ProductUpdateRequest request) {
+    public ProductDetailsResponse updateById(ProductUpdateRequest request) {
         Product product = productRepository.findById(request.getProductId()).orElseThrow(()->  new NotFoundException("Product with id=" + request.getProductId() + "not found"));
         product.setProductName(request.getProductName());
         product.setDescription(request.getDescription());
@@ -67,7 +66,7 @@ public class ProductService {
         return getProductById(product.getId());
     }
 
-    public Page<ProductResponse> deleteById(Long id) {
+    public Page<ProductDetailsResponse> deleteById(Long id) {
         Pageable pageable = Pageable.unpaged();
         Product product = productRepository.findById(id).orElseThrow(()-> new NotFoundException("Not found"));
         for (CartItem c : product.getCartItems()){
@@ -79,7 +78,7 @@ public class ProductService {
     }
 
 
-    public ProductResponse addImages(Long id, MultipartFile[] files) {
+    public ProductDetailsResponse addImages(Long id, MultipartFile[] files) {
             Product product = productRepository.findById(id).orElseThrow(()-> new NotFoundException("Not found"));
             List<ProductImage> productImages = new ArrayList<>();
 
@@ -97,18 +96,18 @@ public class ProductService {
                 e.printStackTrace();
             }
             productRepository.save(product);
-            return productResponseMapper.toProductResponse(product);
+            return productDetailsResponseMapper.toProductResponse(product);
 
     }
 
-    public Page<ProductResponse> searchProduct(String name, Pageable pageable) {
-        return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productResponseMapper::toProductResponse);
+    public Page<ProductDetailsResponse> searchProduct(String name, Pageable pageable) {
+        return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productDetailsResponseMapper::toProductResponse);
     }
 
-    public ProductResponse deleteImage(Long productId,Long imageId) {
+    public ProductDetailsResponse deleteImage(Long productId, Long imageId) {
         Product product = productRepository.findById(productId).get();
         product.getImageList().remove(productImageRepository.findById(imageId).get());
         productRepository.save(product);
-        return productResponseMapper.toProductResponse(product);
+        return productDetailsResponseMapper.toProductResponse(product);
     }
 }

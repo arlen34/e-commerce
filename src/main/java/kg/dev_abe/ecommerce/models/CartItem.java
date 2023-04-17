@@ -22,4 +22,8 @@ public class CartItem {
     private Product product;
     @ManyToOne
     private Cart cart;
+    public Double evalTotalPrice() {
+        return getProduct().getPrice() * quantity;
+    }
+
 }

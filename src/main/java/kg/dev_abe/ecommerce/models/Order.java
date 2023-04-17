@@ -1,10 +1,8 @@
 package kg.dev_abe.ecommerce.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import kg.dev_abe.ecommerce.models.enums.OrderStatus;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,19 +14,20 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "orders")
+@Builder
 public class Order {
     private static final String SEQ_NAME = "order_seq";
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_NAME)
     @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME)
-    private Long id;
-
-    @ManyToOne
+    private Long orderId;
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     private User user;
-
     private LocalDate orderDate;
-    @ManyToMany
-    private List<CartItem> orderItems = new ArrayList<>();
+    private OrderStatus orderStatus;
+    private double totalPrice;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<OrderItem> orderItems;
+
 }

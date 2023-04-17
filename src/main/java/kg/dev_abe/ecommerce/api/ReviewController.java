@@ -3,7 +3,7 @@ package kg.dev_abe.ecommerce.api;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.ReviewRequest;
-import kg.dev_abe.ecommerce.dto.response.ProductResponse;
+import kg.dev_abe.ecommerce.dto.response.ProductDetailsResponse;
 import kg.dev_abe.ecommerce.dto.response.ReviewResponse;
 import kg.dev_abe.ecommerce.services.ProductService;
 import kg.dev_abe.ecommerce.services.ReviewService;
@@ -26,7 +26,7 @@ public class ReviewController {
     @Operation(summary = "Post the new feedback",
             description = "This endpoint returns a new created feedback with all feedbacks")
     @PostMapping
-    public ProductResponse addFeedback(@RequestBody ReviewRequest request, Principal principal){
+    public ProductDetailsResponse addFeedback(@RequestBody ReviewRequest request, Principal principal){
         reviewService.createFeedback(request, principal);
         return productService.getProductById(request.getProductId());
     }

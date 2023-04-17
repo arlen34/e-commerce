@@ -21,8 +21,8 @@ public class CartController {
 
     private final CartService cartService;
 
-    @Operation(summary = "Create parent categories or sub categories",
-            description = "This endpoint returns the created categories")
+    @Operation(summary = "Add product to cart",
+            description = "This endpoint returns message about adding product to cart")
     @PostMapping("/{productId}")
     public SimpleResponse addToCart(@PathVariable Long productId, Principal principal) {
         return cartService.addToCart(productId, principal);
@@ -40,10 +40,13 @@ public class CartController {
     public List<CartItemResponse> getCartItems(Principal principal) {
         return cartService.getCartItems(principal);
     }
-    @Operation(summary = "Delete your cart by id",
-            description = "This endpoint returns the message about deleted cart")
-    @DeleteMapping("/{id}")
-    public SimpleResponse delete(@PathVariable Long id){
-        return cartService.deleteCart(id);
+    @Operation(summary = "Delete cartItem from cart",
+            description = "This endpoint delete item from shopping cart"
+    )
+    @DeleteMapping("/{cartItemId}")
+    public SimpleResponse delete(@PathVariable Long cartItemId){
+        return cartService.deleteItemFromCart(cartItemId);
     }
+
+
 }
