@@ -20,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -81,5 +83,9 @@ public class UserService {
         userRepository.save(user);
         return new AddAdminResponse(user.getId(), user.getEmail(), request.getPassword(), user.getRole(),
                 user.getName(), user.getSurname(), user.getPhoneNumber());
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findUsers();
     }
 }
