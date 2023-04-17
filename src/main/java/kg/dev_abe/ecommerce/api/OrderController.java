@@ -68,13 +68,6 @@ public class OrderController {
         return orderService.deleteOrder(orderId);
     }
 
-    @Operation(summary = "Update order", description = "This endpoint update order by id")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("{orderId}")
-    public SimpleResponse updateOrder(@PathVariable Long orderId) {
-        //TODO: add update order logic
-        return null;
-    }
 
     @PostMapping("/{orderId}/cancel")
     @Operation(summary = "Cancel order", description = "This endpoint cancel order by id")

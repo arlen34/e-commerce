@@ -1,13 +1,46 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-          crossorigin="anonymous">
+    <title>Invoice</title>
     <style>
-        body {
-            margin: 50px;
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .totals {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .footer {
+            width: 100%;
+            text-align: right;
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-label {
+            display: inline-block;
+            width: 100px;
         }
     </style>
 </head>
@@ -19,24 +52,21 @@
             <table class="table">
                 <tr>
                     <td><strong>Order ID:</strong></td>
-                    <td th:text="${order.orderId}"></td>
+                    <td th:text="${order.getOrderId()}"></td>
                 </tr>
                 <tr>
                     <td><strong>User:</strong></td>
-                    <td th:text="${order.user.username}"></td>
+                    <td th:text="${order.getUser().getEmail()}"></td>
                 </tr>
                 <tr>
                     <td><strong>Order Date:</strong></td>
-                    <td th:text="${order.orderDate}"></td>
+                    <td th:text="${order.getOrderDate()}"></td>
                 </tr>
                 <tr>
                     <td><strong>Status:</strong></td>
-                    <td th:text="${order.orderStatus}"></td>
+                    <td th:text="${order.getOrderStatus()}"></td>
                 </tr>
-                <tr>
-                    <td><strong>Total Price:</strong></td>
-                    <td th:text="${order.totalPrice}"></td>
-                </tr>
+
             </table>
         </div>
     </div>
@@ -52,16 +82,29 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="orderItem : ${order.orderItems}">
-                    <td th:text="${orderItem.itemName}"></td>
-                    <td th:text="${orderItem.quantity}"></td>
-                    <td th:text="${orderItem.price}"></td>
-                    <td th:text="${orderItem.price * orderItem.quantity}"></td>
+                <tr th:each="orderItem : ${order.getOrderItems()}">
+                    <td th:text="${orderItem.getProduct().getProductName()}"></td>
+                    <td th:text="${orderItem.getQuantity()}"></td>
+                    <td th:text="${orderItem.getProduct().getPrice()}"></td>
+                    <td th:text="${orderItem.getProduct().getPrice() * orderItem.getQuantity()}"></td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="totals">Total:</td>
+                    <td class="totals" th:text="${order.totalPrice}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
+    <div class="footer">
+        <span class="footer-label">Date:</span> ____________
+        <span class="footer-label">Signature:</span> ____________
+    </div>
 </div>
+</body>
+</html>
 
 

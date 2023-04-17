@@ -8,7 +8,6 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", uses = { ReviewMapper.class})
 public interface ProductDetailsResponseMapper {
-    ProductDetailsResponseMapper INSTANCE = Mappers.getMapper(ProductDetailsResponseMapper.class);
     @Mapping(target = "category", source = "category.categoryName")
     ProductDetailsResponse toProductResponse(Product product);
 
