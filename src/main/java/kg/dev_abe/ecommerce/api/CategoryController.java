@@ -7,8 +7,10 @@ import kg.dev_abe.ecommerce.dto.request.CategoryUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
 import kg.dev_abe.ecommerce.services.CategoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,8 +37,7 @@ public class CategoryController {
 
     @Operation(summary = "Create parent categories or sub categories",
             description = "This endpoint returns the created categories")
-    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
-    @PostMapping("/create")
+    @PostMapping(value = "/create")
     public List<CategoryResponse> addCategory(@RequestBody CategoryRequest request) {
         return categoryService.create(request);
     }

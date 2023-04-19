@@ -22,6 +22,10 @@ public class Category {
 
     private String categoryName;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private Image image;
+
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "category", orphanRemoval = true)
     private List<Product> products;
 

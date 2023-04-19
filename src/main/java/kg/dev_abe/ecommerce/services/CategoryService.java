@@ -3,11 +3,15 @@ package kg.dev_abe.ecommerce.services;
 import jakarta.transaction.Transactional;
 import kg.dev_abe.ecommerce.dto.request.CategoryRequest;
 import kg.dev_abe.ecommerce.dto.request.CategoryUpdateRequest;
+import kg.dev_abe.ecommerce.dto.request.ImageRequest;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
+import kg.dev_abe.ecommerce.mappers.CategoryMapper;
 import kg.dev_abe.ecommerce.models.Category;
+import kg.dev_abe.ecommerce.models.Image;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.util.List;
@@ -17,20 +21,30 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ProductService productService;
+    private CategoryMapper categoryMapper;
 
     public List<CategoryResponse> getAllCategories() {
-//        return categoryRepository.findAll().stream().map(c -> new CategoryResponse(c.getId(),c.getCategoryName())).collect(Collectors.toList());
-        return categoryRepository.findAllByParentCategoryIsNull();
+        return categoryRepository.findAllByParentCategoryIsNull()
+                .stream()
+                .map(categoryMapper::toCategoryResponse)
+                .toList();
     }
 
     public List<CategoryResponse> getSubCategoriesByParentCatId(Long categoryId) {
-        return categoryRepository.getCategoriesByParentCategoryId(categoryId);
+        return categoryRepository.getCategoriesByParentCategoryId(categoryId)
+                .stream()
+                .map(categoryMapper::toCategoryResponse)
+                .toList();
     }
 
     public List<CategoryResponse> create(CategoryRequest request) {
         Category parentCategory = categoryRepository.findById(request.getParentCategoryId()).orElse(null);
+        ImageRequest requestImage = request.getImage();
+        Image image = (requestImage != null) ? new Image(requestImage.getImageData(), requestImage.getFileType()) : null;
+
         categoryRepository.save(Category.builder()
                 .categoryName(request.getCategoryName())
+                .image(image)
                 .parentCategory(parentCategory)
                 .build());
         if (request.getParentCategoryId() == 0) {

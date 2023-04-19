@@ -84,5 +84,10 @@ public class OrderController {
         orderService.confirmOrder(orderId);
     }
 
+    @PostMapping("{orderId}/complete")
+    @Operation(summary = "Complete order", description = "This endpoint complete order by id")
+    public SimpleResponse completeOrder(@PathVariable Long orderId) {
+         return orderService.completeOrder(orderId);
+    }
 
 }

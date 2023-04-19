@@ -1,19 +1,15 @@
-package kg.dev_abe.ecommerce.dto.response;
-
+package kg.dev_abe.ecommerce.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.Builder;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class ProductImageDto {
-    private Long id;
-    private byte[] data;
+public class ImageRequest {
+    private byte[] imageData;
     private String fileType;
 }

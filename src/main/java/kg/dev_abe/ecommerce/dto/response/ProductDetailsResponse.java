@@ -19,6 +19,6 @@ public class ProductDetailsResponse {
     private Integer amount;
     private String category;
     private List<ReviewResponse> reviews;
-    private List<ProductImageDto> imageList;
+    private List<ImageDto> imageList;
 
 }

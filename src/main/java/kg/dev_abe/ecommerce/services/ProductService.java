@@ -8,8 +8,8 @@ import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.mappers.ProductDetailsResponseMapper;
 import kg.dev_abe.ecommerce.models.CartItem;
 import kg.dev_abe.ecommerce.models.Category;
+import kg.dev_abe.ecommerce.models.Image;
 import kg.dev_abe.ecommerce.models.Product;
-import kg.dev_abe.ecommerce.models.ProductImage;
 import kg.dev_abe.ecommerce.repositories.CartItemRepository;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import kg.dev_abe.ecommerce.repositories.ProductImageRepository;
@@ -23,6 +23,7 @@ import org.webjars.NotFoundException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -44,8 +45,7 @@ public class ProductService {
     }
 
 
-
-    public Page<ProductDetailsResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable){
+    public Page<ProductDetailsResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable) {
 
         return productRepository.findByCategoryId(categoryId, pageable).map(productDetailsResponseMapper::toProductResponse);
     }
@@ -58,7 +58,7 @@ public class ProductService {
 
     @Transactional
     public ProductDetailsResponse updateById(ProductUpdateRequest request) {
-        Product product = productRepository.findById(request.getProductId()).orElseThrow(()->  new NotFoundException("Product with id=" + request.getProductId() + "not found"));
+        Product product = productRepository.findById(request.getProductId()).orElseThrow(() -> new NotFoundException("Product with id=" + request.getProductId() + "not found"));
         product.setProductName(request.getProductName());
         product.setDescription(request.getDescription());
         product.setAmount(request.getAmount());
@@ -68,35 +68,27 @@ public class ProductService {
 
     public Page<ProductDetailsResponse> deleteById(Long id) {
         Pageable pageable = Pageable.unpaged();
-        Product product = productRepository.findById(id).orElseThrow(()-> new NotFoundException("Not found"));
-        for (CartItem c : product.getCartItems()){
+        Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
+        for (CartItem c : product.getCartItems()) {
             cartItemRepository.updateForDelete(c.getId());
         }
         product.getCartItems().forEach(c -> cartItemRepository.updateForDelete(c.getId()));
         productRepository.delete(product);
-        return getAllProductsByCategoryId(product.getCategory().getId(),pageable);
+        return getAllProductsByCategoryId(product.getCategory().getId(), pageable);
     }
 
 
     public ProductDetailsResponse addImages(Long id, MultipartFile[] files) {
-            Product product = productRepository.findById(id).orElseThrow(()-> new NotFoundException("Not found"));
-            List<ProductImage> productImages = new ArrayList<>();
+        Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
 
-            try {
-                ProductImage productImage;
-                for (MultipartFile file: files) {
-                    productImage = new ProductImage();
-                    productImage.setFileType(file.getContentType());
-                    productImage.setImageData(file.getBytes());
-                    productImage.setProduct(product);
-                    productImages.add(productImage);
-                }
-                product.getImageList().addAll(productImages);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            productRepository.save(product);
-            return productDetailsResponseMapper.toProductResponse(product);
+        List<Image> images = Arrays.stream(files)
+                .map(Image::parseImage)
+                .toList();
+
+        product.getImageList().addAll(images);
+
+        productRepository.save(product);
+        return productDetailsResponseMapper.toProductResponse(product);
 
     }
 

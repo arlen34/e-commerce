@@ -34,7 +34,7 @@ public class Product {
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
-    private List<ProductImage> imageList = new ArrayList<>();
+    private List<Image> imageList = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<CartItem> cartItems;

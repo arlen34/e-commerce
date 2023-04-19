@@ -5,7 +5,7 @@ import kg.dev_abe.ecommerce.models.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = { ReviewMapper.class})
+@Mapper(componentModel = "spring", uses = { ReviewMapper.class, ImageMapper.class})
 public interface ProductDetailsResponseMapper {
     @Mapping(target = "category", source = "category.categoryName")
     ProductDetailsResponse toProductResponse(Product product);

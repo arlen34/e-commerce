@@ -62,21 +62,6 @@ public class OrderService {
     }
 
 
-    public SimpleResponse placeOrder(Principal principal, OrderRequestFromCart orderRequest) {
-        User user = userService.findUserByEmail(principal.getName());
-
-        List<OrderItem> orderItems = orderRequest.getCartItemIds().stream()
-                .map(id -> cartItemRepository.findById(id).get())
-                .map(orderItemMapper::toOrderItem)
-                .toList();
-
-        saveOrder(user, orderItems);
-
-        emailService.sendEmail(user.getEmail(), "Order placing", "Your order placed successfully");
-
-        return new SimpleResponse("Order placed successfully", "Saved");
-    }
-
     private void saveOrder(User user, List<OrderItem> orderItems) {
         Order order = Order.builder()
                 .user(user)
@@ -94,6 +79,21 @@ public class OrderService {
         });
 
         orderRepository.save(order);
+    }
+
+    public SimpleResponse placeOrder(Principal principal, OrderRequestFromCart orderRequest) {
+        User user = userService.findUserByEmail(principal.getName());
+
+        List<OrderItem> orderItems = orderRequest.getCartItemIds().stream()
+                .map(id -> cartItemRepository.findById(id).get())
+                .map(orderItemMapper::toOrderItem)
+                .toList();
+
+        saveOrder(user, orderItems);
+
+        emailService.sendEmail(user.getEmail(), "Order placing", "Your order placed successfully");
+
+        return new SimpleResponse("Order placed successfully", "Saved");
     }
 
 
@@ -157,14 +157,24 @@ public class OrderService {
 
         emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
 
-        new SimpleResponse("Order confirmed successfully", "Confirmed");
+    }
+
+    public SimpleResponse completeOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
+        if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELED)
+            throw new ECommerceException("Order already completed or canceled");
+
+        order.setOrderStatus(OrderStatus.COMPLETED);
+        orderRepository.save(order);
+
+        return new SimpleResponse("Order completed successfully", "Completed");
     }
 
 
-    public ResponseEntity<byte[]> generateInvoice(Long orderId) {
+
+    public  ResponseEntity<byte[]> generateInvoice(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
-        byte[] pdfBytes;
-        pdfBytes = invoiceGenerator.generateInvoice(order);
+        byte[] pdfBytes  = invoiceGenerator.generateInvoice(order);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "order-invoice.pdf");
