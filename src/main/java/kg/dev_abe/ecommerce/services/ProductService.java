@@ -56,7 +56,6 @@ public class ProductService {
         return productDetailsResponseMapper.toProductResponse(product);
     }
 
-    @Transactional
     public ProductDetailsResponse updateById(ProductUpdateRequest request) {
         Product product = productRepository.findById(request.getProductId()).orElseThrow(() -> new NotFoundException("Product with id=" + request.getProductId() + "not found"));
         product.setProductName(request.getProductName());
@@ -83,8 +82,8 @@ public class ProductService {
 
         List<Image> images = Arrays.stream(files)
                 .map(Image::parseImage)
+                .peek((image) -> image.setProduct(product))
                 .toList();
-
         product.getImageList().addAll(images);
 
         productRepository.save(product);
