@@ -1,5 +1,6 @@
 package kg.dev_abe.ecommerce.api;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.AddAdminRequest;
@@ -70,4 +71,9 @@ public class AuthController {
         return new ResponseEntity<>(userService.updateUserId(id, user), HttpStatus.OK);
     }
 
+    @Operation(summary = "Authentication with google",description = "Authentication via Google using Firebase")
+    @PostMapping("/authenticate/google")
+    public AuthResponse authWithGoogleAccount(String tokenId) throws FirebaseAuthException {
+        return userService.authWithGoogleAccount(tokenId);
+    }
 }

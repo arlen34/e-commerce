@@ -1,5 +1,12 @@
 package kg.dev_abe.ecommerce.services;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+import jakarta.annotation.PostConstruct;
 import kg.dev_abe.ecommerce.dto.request.AddAdminRequest;
 import kg.dev_abe.ecommerce.dto.request.LoginRequest;
 import kg.dev_abe.ecommerce.dto.request.RegisterRequest;
@@ -12,6 +19,7 @@ import kg.dev_abe.ecommerce.models.enums.Role;
 import kg.dev_abe.ecommerce.repositories.UserRepository;
 import kg.dev_abe.ecommerce.security.jwt.JwtUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -28,6 +37,16 @@ public class UserService {
     private final AuthenticationManager manager;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
+
+    @PostConstruct
+    public void init() throws IOException {
+        GoogleCredentials googleCredentials =
+                GoogleCredentials.fromStream(new ClassPathResource("serviceAccountKey.json")
+                        .getInputStream());
+        FirebaseOptions firebaseOptions = FirebaseOptions.builder()
+                .setCredentials(googleCredentials).build();
+        FirebaseApp.initializeApp(firebaseOptions);
+    }
 
     public AuthResponse login(LoginRequest request) {
         Authentication authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -56,9 +75,11 @@ public class UserService {
     public User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new ECommerceException("User not found"));
     }
+
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new ECommerceException("User not found"));
     }
+
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
     }
@@ -88,5 +109,22 @@ public class UserService {
 
     public List<User> getUsers() {
         return userRepository.findUsers();
+    }
+
+    public AuthResponse authWithGoogleAccount(String tokenId) throws FirebaseAuthException {
+        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
+        User user;
+        if (!userRepository.existsUserByEmail(firebaseToken.getEmail())) {
+            User newUser = new User();
+            String[] name = firebaseToken.getName().split(" ");
+            newUser.setName(name[0]);
+            newUser.setSurname(name[1]);
+            newUser.setRole(Role.USER);
+            userRepository.save(newUser);
+        }
+        user = userRepository.findUserByEmail(firebaseToken.getEmail());
+        return new AuthResponse(user.getEmail(),
+                jwtUtils.generateToken(user.getEmail()),
+                user.getRole());
     }
 }
