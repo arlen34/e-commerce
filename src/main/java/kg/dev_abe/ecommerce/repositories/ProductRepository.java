@@ -6,12 +6,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ProductRepository extends JpaRepository<Product,Long> {
-    @Query("select p from Product p where p.category.id = ?1")
-    Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
+
+
+    Page<Product> findAllByCategoryIdOrderByReceiptDateDesc(Long categoryId, Pageable pageable);
 
     Page<Product> findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String name, String description, Pageable pageable);
-    @Override
-    Page<Product> findAll(Pageable pageable);
+    Page<Product> findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndCategoryId(String name, String description, Long categoryId, Pageable pageable);
 
+
+    @Query(value = "SELECT p FROM Product p ORDER BY p.receiptDate DESC LIMIT 20")
+    List<Product> findLatestProducts();
+
+
+    @Query(value = "SELECT p FROM Product p ORDER BY p.sold DESC LIMIT 20")
+    List<Product> findTopBySoldOrderBySoldDesc();
 }
