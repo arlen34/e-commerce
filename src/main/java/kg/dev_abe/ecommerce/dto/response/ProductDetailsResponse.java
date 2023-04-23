@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -12,13 +13,18 @@ import java.util.List;
 @ToString
 @Builder
 public class ProductDetailsResponse {
-    private Long id;
+    private long id;
+    private int price;
+    private int amount;
+    private int sold;
+
+    private String category;
     private String productName;
     private String description;
-    private Double price;
-    private Integer amount;
-    private String category;
-    private List<ReviewResponse> reviews;
+
+    private LocalDate receiptDate;
+
     private List<ImageDto> imageList;
+    private List<ReviewResponse> reviews;
 
 }

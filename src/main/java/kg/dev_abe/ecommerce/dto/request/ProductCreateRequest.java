@@ -8,9 +8,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ProductCreateRequest {
-    private Long categoryId;
+    private long categoryId;
     private String productName;
     private String description;
-    private Double price;
-    private Integer amount;
+    private double price;
+    private int amount;
 }
