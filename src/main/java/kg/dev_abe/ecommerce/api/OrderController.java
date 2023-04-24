@@ -58,14 +58,14 @@ public class OrderController {
         return orderService.createOrder(orderRequest, principal);
     }
     @Operation(summary = "Get all orders", description = "This endpoint returns all orders")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @GetMapping("/all-orders")
     public Page<OrderResponse> getAllOrders(@PageableDefault(sort = "orderId", direction = Sort.Direction.DESC) Pageable pageable) {
         return orderService.getAllOrders(pageable);
     }
 
     @Operation(summary = "Delete order", description = "This endpoint delete order by id")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @DeleteMapping("{orderId}")
     public SimpleResponse deleteOrder(@PathVariable Long orderId) {
         return orderService.deleteOrder(orderId);
