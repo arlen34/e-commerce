@@ -21,7 +21,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/order/")
+@RequestMapping("/api/order")
 @AllArgsConstructor
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Tag(name = "Order API", description = "The order API for customers")
@@ -35,13 +35,13 @@ public class OrderController {
     }
 
     @Operation(summary = "Get order by id", description = "This endpoint returns order by id")
-    @GetMapping("{orderId}")
+    @GetMapping("/{orderId}")
     public OrderResponse getOrderById(@PathVariable Long orderId) {
         return orderService.getOrderById(orderId);
     }
 
     @SneakyThrows
-    @GetMapping("{orderId}/generate-invoice")
+    @GetMapping("/{orderId}/generate-invoice")
     @Operation(summary = "Generate invoice file", description = "This endpoint return invoice file for order")
     public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId) {
         return orderService.generateInvoice(orderId);
@@ -66,7 +66,7 @@ public class OrderController {
 
     @Operation(summary = "Delete order", description = "This endpoint delete order by id")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
-    @DeleteMapping("{orderId}")
+    @DeleteMapping("/{orderId}")
     public SimpleResponse deleteOrder(@PathVariable Long orderId) {
         return orderService.deleteOrder(orderId);
     }
@@ -84,7 +84,7 @@ public class OrderController {
         orderService.confirmOrder(orderId);
     }
 
-    @PostMapping("{orderId}/complete")
+    @PostMapping("/{orderId}/complete")
     @Operation(summary = "Complete order", description = "This endpoint complete order by id")
     public SimpleResponse completeOrder(@PathVariable Long orderId) {
          return orderService.completeOrder(orderId);
