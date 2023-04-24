@@ -6,9 +6,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Controller
 @SpringBootApplication
 @EnableAsync
+@Controller
 public class ECommerceApplication {
 
     public static void main(String[] args) {
@@ -17,7 +17,7 @@ public class ECommerceApplication {
     }
 
     @GetMapping("/")
-    public String greetingPage() {
+    public String index() {
         return "welcome";
     }
 }

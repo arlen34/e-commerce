@@ -73,9 +73,8 @@ public class OrderService {
                         .sum())
                 .build();
 
-        orderItems.forEach((orderItem) -> {
+        orderItems.forEach(orderItem -> {
             orderItem.setOrder(order);
-            orderItem.getProduct().setAmount(orderItem.getProduct().getAmount() - orderItem.getQuantity());
         });
 
         orderRepository.save(order);
@@ -122,6 +121,21 @@ public class OrderService {
         return new SimpleResponse("Order placed successfully", "Saved");
     }
 
+    @Async
+    public void confirmOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
+        if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELED)
+            throw new ECommerceException("Order already completed or canceled");
+
+        soldProducts(order.getOrderItems(),true);
+        order.setOrderStatus(OrderStatus.CONFIRMED);
+        orderRepository.save(order);
+
+
+        emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
+
+    }
+
     public SimpleResponse deleteOrder(Long orderId) {
         orderRepository.deleteById(orderId);
         return new SimpleResponse("Order deleted successfully", "Deleted");
@@ -138,26 +152,13 @@ public class OrderService {
 
         if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELED)
             throw new ECommerceException("Order already completed or canceled");
-        order.getOrderItems().forEach((orderItem) -> orderItem.getProduct().setAmount(orderItem.getProduct().getAmount() + orderItem.getQuantity()));
+        soldProducts(order.getOrderItems(),false);
         order.setOrderStatus(OrderStatus.CANCELED);
+
         orderRepository.save(order);
         emailService.sendEmail(order.getUser().getEmail(), "Order cancellation", "Your order canceled successfully");
     }
-
     //write confirm order method
-    @Async
-    public void confirmOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
-        if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELED)
-            throw new ECommerceException("Order already completed or canceled");
-
-        order.getOrderItems().forEach((orderItem) -> orderItem.getProduct().setAmount(orderItem.getProduct().getAmount() - orderItem.getQuantity()));
-        order.setOrderStatus(OrderStatus.CONFIRMED);
-        orderRepository.save(order);
-
-        emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
-
-    }
 
     public SimpleResponse completeOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
@@ -171,15 +172,34 @@ public class OrderService {
     }
 
 
-
-    public  ResponseEntity<byte[]> generateInvoice(Long orderId) {
+    public ResponseEntity<byte[]> generateInvoice(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
-        byte[] pdfBytes  = invoiceGenerator.generateInvoice(order);
+        byte[] pdfBytes = invoiceGenerator.generateInvoice(order);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "order-invoice.pdf");
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
+
+    public void soldProducts(List<OrderItem> orderItems, boolean toSell) {
+        for (OrderItem orderItem : orderItems) {
+            Product product = orderItem.getProduct();
+
+            int quantity = orderItem.getQuantity();
+            int sold = product.getSold();
+            int amount = product.getAmount();
+
+            if (toSell) {
+                product.setAmount(amount - quantity);
+                product.setSold(sold + quantity);
+            } else {
+                product.setAmount(amount + quantity);
+                product.setSold(sold - quantity);
+            }
+
+        }
+    }
+
 }
 

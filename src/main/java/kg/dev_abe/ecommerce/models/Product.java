@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +23,19 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_NAME)
     @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME, allocationSize = 1, initialValue = 10)
-    private Long id;
+    private long id;
+    private double price;
+    private int amount;
+    private int sold;
+
     private String productName;
     private String description;
-    private Double price;
-    private Integer amount;
+    private LocalDate receiptDate;
+
+
+
     @ManyToOne
     private Category category;
-
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
@@ -38,13 +44,16 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<CartItem> cartItems;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     private List<OrderItem> orderItems;
+
 
     public Product(ProductCreateRequest request) {
         this.productName = request.getProductName();
         this.description = request.getDescription();
         this.price = request.getPrice();
         this.amount = request.getAmount();
+        this.receiptDate = LocalDate.now();
     }
 }

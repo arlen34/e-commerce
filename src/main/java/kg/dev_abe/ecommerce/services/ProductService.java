@@ -21,10 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -47,9 +47,8 @@ public class ProductService {
 
     public Page<ProductDetailsResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable) {
 
-        return productRepository.findByCategoryId(categoryId, pageable).map(productDetailsResponseMapper::toProductResponse);
+        return productRepository.findAllByCategoryIdOrderByReceiptDateDesc(categoryId, pageable).map(productDetailsResponseMapper::toProductResponse);
     }
-
 
     public ProductDetailsResponse getProductById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product was not found"));
@@ -91,14 +90,48 @@ public class ProductService {
 
     }
 
-    public Page<ProductDetailsResponse> searchProduct(String name, Pageable pageable) {
-        return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productDetailsResponseMapper::toProductResponse);
-    }
+
+
 
     public ProductDetailsResponse deleteImage(Long productId, Long imageId) {
         Product product = productRepository.findById(productId).get();
         product.getImageList().remove(productImageRepository.findById(imageId).get());
         productRepository.save(product);
         return productDetailsResponseMapper.toProductResponse(product);
+    }
+
+
+    public List<ProductDetailsResponse> getTopSoldProducts() {
+        return productRepository
+                .findTopBySoldOrderBySoldDesc()
+                .stream()
+                .map(productDetailsResponseMapper::toProductResponse)
+                .toList();
+    }
+
+    public List<ProductDetailsResponse> getLatestProducts() {
+        return productRepository.findLatestProducts()
+                .stream()
+                .map(productDetailsResponseMapper::toProductResponse)
+                .toList();
+    }
+
+    public Map<String, List<ProductDetailsResponse>> getMainPage() {
+
+        Map<String, List<ProductDetailsResponse>> body = new HashMap<>();
+        List<ProductDetailsResponse> topSold = getTopSoldProducts();
+        List<ProductDetailsResponse> latest = getLatestProducts();
+
+        body.put("topSold", topSold);
+        body.put("latest", latest);
+        return body;
+    }
+
+    public Page<ProductDetailsResponse> searchProduct(String name, Long categoryId, Pageable pageable) {
+        if (categoryId == null) {
+            return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productDetailsResponseMapper::toProductResponse);
+        } else {
+            return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndCategoryId(name, name, categoryId, pageable).map(productDetailsResponseMapper::toProductResponse);
+        }
     }
 }
