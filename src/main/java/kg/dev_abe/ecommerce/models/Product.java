@@ -26,10 +26,13 @@ public class Product {
     private long id;
     private double price;
     private int amount;
+    @Column(name = "sold",columnDefinition = "int default 0")
     private int sold;
 
     private String productName;
     private String description;
+
+    @Column(name = "receipt_date", columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private LocalDate receiptDate;
 
 
