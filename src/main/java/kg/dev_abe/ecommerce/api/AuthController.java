@@ -8,6 +8,7 @@ import kg.dev_abe.ecommerce.dto.request.LoginRequest;
 import kg.dev_abe.ecommerce.dto.request.RegisterRequest;
 import kg.dev_abe.ecommerce.dto.response.AddAdminResponse;
 import kg.dev_abe.ecommerce.dto.response.AuthResponse;
+import kg.dev_abe.ecommerce.dto.response.UserResponse;
 import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.services.UserService;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -48,8 +48,8 @@ public class AuthController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
+    public UserResponse getUserById(@PathVariable Long id) {
+        return userService.findUserById(id);
     }
 
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
@@ -61,8 +61,8 @@ public class AuthController {
 
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     @GetMapping("/all")
-    public List<ResponseEntity<User>> getAllUsers() {
-        return userService.getUsers().stream().map(ResponseEntity::ok).collect(Collectors.toList());
+    public List<UserResponse> getAllUsers() {
+        return userService.getUsers();
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
