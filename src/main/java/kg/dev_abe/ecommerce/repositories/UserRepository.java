@@ -13,6 +13,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     boolean existsUserByEmail(String email);
 
-    @Query("select u from User u where u.role = 'USER' or u.role = 'ADMIN'")
+    @Query("select u from User u where u.role = 'ADMIN' or u.role = 'USER'")
     List<User> findUsers();
 }

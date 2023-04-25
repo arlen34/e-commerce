@@ -12,8 +12,11 @@ import kg.dev_abe.ecommerce.dto.request.LoginRequest;
 import kg.dev_abe.ecommerce.dto.request.RegisterRequest;
 import kg.dev_abe.ecommerce.dto.response.AddAdminResponse;
 import kg.dev_abe.ecommerce.dto.response.AuthResponse;
+import kg.dev_abe.ecommerce.dto.response.UserResponse;
 import kg.dev_abe.ecommerce.exceptions.BadRequestException;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
+import kg.dev_abe.ecommerce.exceptions.NotFoundException;
+import kg.dev_abe.ecommerce.mappers.UserMapper;
 import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.models.enums.Role;
 import kg.dev_abe.ecommerce.repositories.UserRepository;
@@ -29,11 +32,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final AuthenticationManager manager;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
@@ -72,8 +77,8 @@ public class UserService {
         //I need to look again
     }
 
-    public User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new ECommerceException("User not found"));
+    public UserResponse findUserById(Long id) {
+        return userRepository.findById(id).map(userMapper::toUserResponse).orElseThrow(NotFoundException::new);
     }
 
     public User findUserByEmail(String email) {
@@ -107,8 +112,8 @@ public class UserService {
                 user.getName(), user.getSurname(), user.getPhoneNumber());
     }
 
-    public List<User> getUsers() {
-        return userRepository.findUsers();
+    public List<UserResponse> getUsers() {
+        return userRepository.findUsers().stream().map(userMapper::toUserResponse).toList();
     }
 
     public AuthResponse authWithGoogleAccount(String tokenId) throws FirebaseAuthException {
