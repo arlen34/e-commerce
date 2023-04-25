@@ -10,6 +10,7 @@ import kg.dev_abe.ecommerce.models.Category;
 import kg.dev_abe.ecommerce.models.Image;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -23,6 +24,7 @@ public class CategoryService {
     private final ProductService productService;
     private CategoryMapper categoryMapper;
 
+    @Transactional
     public List<CategoryResponse> getAllCategories() {
         return categoryRepository.findAllByParentCategoryIsNull()
                 .stream()
@@ -30,6 +32,7 @@ public class CategoryService {
                 .toList();
     }
 
+    @Transactional
     public List<CategoryResponse> getSubCategoriesByParentCatId(Long categoryId) {
         return categoryRepository.getCategoriesByParentCategoryId(categoryId)
                 .stream()
@@ -37,19 +40,23 @@ public class CategoryService {
                 .toList();
     }
 
-    public List<CategoryResponse> create(CategoryRequest request) {
-        Category parentCategory = categoryRepository.findById(request.getParentCategoryId()).orElse(null);
-        ImageRequest requestImage = request.getImage();
-        Image image = (requestImage != null) ? new Image(requestImage.getImageData(), requestImage.getFileType()) : null;
 
-        categoryRepository.save(Category.builder()
-                .categoryName(request.getCategoryName())
+    public List<CategoryResponse> create(Long parentId,String name,MultipartFile file) {
+        Category parentCategory = categoryRepository.findById(parentId).orElse(null);
+        Image image = file != null ? Image.parseImage(file) : null;
+
+        Category category = Category.builder()
+                .categoryName(name)
                 .image(image)
                 .parentCategory(parentCategory)
-                .build());
-        if (request.getParentCategoryId() == 0) {
-            return getAllCategories();
-        } else return getSubCategoriesByParentCatId(request.getParentCategoryId());
+                .build();
+        if (image != null) {
+            image.setCategory(category);
+        }
+        categoryRepository.save(category);
+        if (parentId ==0) return getAllCategories();
+        return getSubCategoriesByParentCatId(parentId);
+
     }
 
     @Transactional

@@ -38,8 +38,11 @@ public class CategoryController {
     @Operation(summary = "Create parent categories or sub categories",
             description = "This endpoint returns the created categories")
     @PostMapping(value = "/create")
-    public List<CategoryResponse> addCategory(@RequestBody CategoryRequest request) {
-        return categoryService.create(request);
+    public void addCategory(
+            @RequestParam("parentCategoryId") Long parentCategoryId,
+            @RequestParam("categoryName") String categoryName,
+            @RequestParam(value = "file",required = false) MultipartFile file) {
+        categoryService.create(parentCategoryId,categoryName,file);
     }
 
     @Operation(summary = "Update categories",
