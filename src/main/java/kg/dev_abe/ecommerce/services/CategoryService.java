@@ -1,16 +1,13 @@
 package kg.dev_abe.ecommerce.services;
 
 import jakarta.transaction.Transactional;
-import kg.dev_abe.ecommerce.dto.request.CategoryRequest;
 import kg.dev_abe.ecommerce.dto.request.CategoryUpdateRequest;
-import kg.dev_abe.ecommerce.dto.request.ImageRequest;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
 import kg.dev_abe.ecommerce.mappers.CategoryMapper;
 import kg.dev_abe.ecommerce.models.Category;
 import kg.dev_abe.ecommerce.models.Image;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -24,24 +21,31 @@ public class CategoryService {
     private final ProductService productService;
     private CategoryMapper categoryMapper;
 
+
+
+
     @Transactional
-    public List<CategoryResponse> getAllCategories() {
-        return categoryRepository.findAllByParentCategoryIsNull()
+    public List<CategoryResponse> getCategories(Category parenCategory) {
+        if (parenCategory == null) {
+            return categoryRepository.findAllByParentCategoryIsNull()
+                    .stream()
+                    .map(categoryMapper::toCategoryResponse)
+                    .toList();
+        }
+        return categoryRepository.getCategoriesByParentCategoryId(parenCategory.getId())
                 .stream()
                 .map(categoryMapper::toCategoryResponse)
                 .toList();
+
+    }
+    @Transactional
+    public List<CategoryResponse> getSubCategories(Long parentCategoryId) {
+        return categoryRepository.getCategoriesByParentCategoryId(parentCategoryId)
+                .stream().map(categoryMapper::toCategoryResponse).toList();
     }
 
     @Transactional
-    public List<CategoryResponse> getSubCategoriesByParentCatId(Long categoryId) {
-        return categoryRepository.getCategoriesByParentCategoryId(categoryId)
-                .stream()
-                .map(categoryMapper::toCategoryResponse)
-                .toList();
-    }
-
-
-    public List<CategoryResponse> create(Long parentId,String name,MultipartFile file) {
+    public void create(Long parentId, String name, MultipartFile file) {
         Category parentCategory = categoryRepository.findById(parentId).orElse(null);
         Image image = file != null ? Image.parseImage(file) : null;
 
@@ -50,12 +54,9 @@ public class CategoryService {
                 .image(image)
                 .parentCategory(parentCategory)
                 .build();
-        if (image != null) {
-            image.setCategory(category);
-        }
+        if (image != null) image.setCategory(category);
+
         categoryRepository.save(category);
-        if (parentId ==0) return getAllCategories();
-        return getSubCategoriesByParentCatId(parentId);
 
     }
 
@@ -63,9 +64,7 @@ public class CategoryService {
     public List<CategoryResponse> update(CategoryUpdateRequest request) {
         Category category = categoryRepository.findById(request.getId()).orElseThrow(() -> new NotFoundException("Not found"));
         category.setCategoryName(request.getCategoryName());
-        if (category.getParentCategory() == null) {
-            return getAllCategories();
-        } else return getSubCategoriesByParentCatId(category.getParentCategory().getId());
+        return getCategories(category.getParentCategory());
     }
 
     @Transactional
@@ -79,9 +78,7 @@ public class CategoryService {
             });
         }
         categoryRepository.delete(category);
-        if (category.getParentCategory() == null) {
-            return getAllCategories();
-        } else return getSubCategoriesByParentCatId(category.getParentCategory().getId());
+        return getCategories(null);
     }
 
 

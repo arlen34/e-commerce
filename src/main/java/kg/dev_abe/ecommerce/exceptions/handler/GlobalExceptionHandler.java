@@ -2,6 +2,7 @@ package kg.dev_abe.ecommerce.exceptions.handler;
 
 
 import kg.dev_abe.ecommerce.exceptions.BadRequestException;
+import kg.dev_abe.ecommerce.exceptions.ECommerceException;
 import kg.dev_abe.ecommerce.exceptions.ExceptionResponse;
 import kg.dev_abe.ecommerce.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ExceptionResponse handlerNotFoundException(NotFoundException e){
         return new ExceptionResponse(HttpStatus.NOT_FOUND, e.getClass().getSimpleName(), e.getMessage());
+    }
+    @ExceptionHandler(ECommerceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionResponse handlerEcommerceException(ECommerceException e) {
+        return new ExceptionResponse(HttpStatus.BAD_REQUEST,e.getClass().getSimpleName(),e.getMessage());
+
     }
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
