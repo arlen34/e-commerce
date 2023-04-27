@@ -24,7 +24,7 @@ public class CartController {
     @Operation(summary = "Add product to cart",
             description = "This endpoint returns message about adding product to cart")
     @PostMapping("/{productId}")
-    public SimpleResponse addToCart(@PathVariable Long productId, Principal principal) {
+    public CartItemResponse addToCart(@PathVariable Long productId, Principal principal) {
         return cartService.addToCart(productId, principal);
     }
 

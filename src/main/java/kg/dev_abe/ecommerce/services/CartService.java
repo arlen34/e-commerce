@@ -32,7 +32,7 @@ public class CartService {
 
     private final ProductDetailsResponseMapper responseMapper;
     private final CartItemMapper cartItemMapper;
-    public SimpleResponse addToCart(Long productId, Principal principal) {
+    public CartItemResponse addToCart(Long productId, Principal principal) {
         Cart cart = cartRepository.findByUserEmail(principal.getName());
 
         if (cart ==null || !cartRepository.existsById(cart.getId())) {
@@ -50,7 +50,7 @@ public class CartService {
                 .quantity(1)
                 .build();
         itemRepository.save(cartItem);
-        return new SimpleResponse("Successfully added to cart", "SAVE");
+        return cartItemMapper.toCartItemResponse(cartItem);
     }
 
     public SimpleResponse changeQuantity(Long cartItemId, Integer quantity) {
