@@ -1,7 +1,6 @@
 package kg.dev_abe.ecommerce.services;
 
 import jakarta.transaction.Transactional;
-import kg.dev_abe.ecommerce.dto.request.CategoryUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
 import kg.dev_abe.ecommerce.mappers.CategoryMapper;
 import kg.dev_abe.ecommerce.models.Category;
@@ -61,9 +60,12 @@ public class CategoryService {
     }
 
     @Transactional
-    public List<CategoryResponse> update(CategoryUpdateRequest request) {
-        Category category = categoryRepository.findById(request.getId()).orElseThrow(() -> new NotFoundException("Not found"));
-        category.setCategoryName(request.getCategoryName());
+    public List<CategoryResponse> update(Long categoryId,String categoryName,MultipartFile file) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Not found"));
+
+        category.setCategoryName(categoryName);
+        category.setImage(Image.parseImage(file));
+        categoryRepository.save(category);
         return getCategories(category.getParentCategory());
     }
 

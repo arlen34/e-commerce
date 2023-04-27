@@ -2,7 +2,6 @@ package kg.dev_abe.ecommerce.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kg.dev_abe.ecommerce.dto.request.CategoryUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
 import kg.dev_abe.ecommerce.services.CategoryService;
 import lombok.AllArgsConstructor;
@@ -47,8 +46,8 @@ public class CategoryController {
             description = "This endpoint returns the updated categories")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @PatchMapping
-    public List<CategoryResponse> updateCategory(@RequestBody CategoryUpdateRequest request) {
-        return categoryService.update(request);
+    public List<CategoryResponse> updateCategory(@RequestParam Long categoryId, @RequestParam("categoryName") String categoryName, @RequestParam(value = "file" ,required = false) MultipartFile file) {
+        return categoryService.update(categoryId,categoryName,file);
     }
 
     @Operation(summary = "Delete categories",

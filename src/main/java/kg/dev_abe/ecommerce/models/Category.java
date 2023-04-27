@@ -29,7 +29,7 @@ public class Category {
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "category", orphanRemoval = true)
     private List<Product> products;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Category parentCategory;
 
     @OneToMany(mappedBy ="parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
