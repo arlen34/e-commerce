@@ -22,7 +22,7 @@ public class Category {
 
     private String categoryName;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
 
