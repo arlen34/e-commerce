@@ -67,9 +67,6 @@ public class ProductService {
     public Page<ProductDetailsResponse> deleteById(Long id) {
         Pageable pageable = Pageable.unpaged();
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
-        for (CartItem c : product.getCartItems()) {
-            cartItemRepository.updateForDelete(c.getId());
-        }
         product.getCartItems().forEach(c -> cartItemRepository.updateForDelete(c.getId()));
         productRepository.delete(product);
         return getAllProductsByCategoryId(product.getCategory().getId(), pageable);
@@ -81,7 +78,6 @@ public class ProductService {
 
         List<Image> images = Arrays.stream(files)
                 .map(Image::parseImage)
-                .peek((image) -> image.setProduct(product))
                 .toList();
         product.getImageList().addAll(images);
 

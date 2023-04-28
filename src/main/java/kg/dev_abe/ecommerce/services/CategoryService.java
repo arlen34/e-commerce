@@ -7,6 +7,7 @@ import kg.dev_abe.ecommerce.models.Category;
 import kg.dev_abe.ecommerce.models.Image;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -19,8 +20,6 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ProductService productService;
     private CategoryMapper categoryMapper;
-
-
 
 
     @Transactional
@@ -53,13 +52,12 @@ public class CategoryService {
                 .image(image)
                 .parentCategory(parentCategory)
                 .build();
-        if (image != null) image.setCategory(category);
 
         categoryRepository.save(category);
 
     }
 
-    @Transactional
+
     public List<CategoryResponse> update(Long categoryId,String categoryName,MultipartFile file) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Not found"));
 
@@ -69,7 +67,6 @@ public class CategoryService {
         return getCategories(category.getParentCategory());
     }
 
-    @Transactional
     public List<CategoryResponse> deleteCategory(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
         if (category.getParentCategory() != null) {

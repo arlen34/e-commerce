@@ -20,11 +20,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_NAME)
     @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME, allocationSize = 1, initialValue = 10)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-    @OneToOne
-    private Category category;
+
     @Lob
     private byte[] imageData;
 

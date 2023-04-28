@@ -23,13 +23,12 @@ public class Category {
     private String categoryName;
 
     @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
 
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "category", orphanRemoval = true)
     private List<Product> products;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Category parentCategory;
 
     @OneToMany(mappedBy ="parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
