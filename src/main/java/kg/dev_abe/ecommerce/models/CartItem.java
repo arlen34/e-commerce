@@ -19,8 +19,10 @@ public class CartItem {
     private Long id;
     private Integer quantity;
     @ManyToOne
+    @JoinColumn
     private Product product;
     @ManyToOne
+    @JoinColumn
     private Cart cart;
     public Double evalTotalPrice() {
         return getProduct().getPrice() * quantity;

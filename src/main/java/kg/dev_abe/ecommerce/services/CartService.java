@@ -65,7 +65,7 @@ public class CartService {
 
 
     public List<CartItemResponse> getCartItems(Principal principal) {
-        List<CartItem> cartItems = itemRepository.findByCart(cartRepository.findByUserEmail(principal.getName()));
+        List<CartItem> cartItems = itemRepository.findByCartOrderById(cartRepository.findByUserEmail(principal.getName()));
         return cartItems.stream()
                 .map(cartItemMapper::toCartItemResponse)
                 .toList();
@@ -74,5 +74,10 @@ public class CartService {
     public SimpleResponse deleteItemFromCart(Long cartItemId){
         itemRepository.updateForDelete(cartItemId);
         return new SimpleResponse("The cart successfully deleted", "DELETE");
+    }
+    public void clearCart(Principal principal) {
+        Cart cart = cartRepository.findByUserEmail(principal.getName());
+        cart.getCartItems().clear();
+
     }
 }

@@ -43,6 +43,7 @@ public class OrderService {
     private UserService userService;
     private ProductRepository productRepository;
     private CartItemRepository cartItemRepository;
+    private CartService cartService;
     private OrderMapper orderMapper;
     private OrderItemMapper orderItemMapper;
     private EmailService emailService;
@@ -73,26 +74,26 @@ public class OrderService {
                         .sum())
                 .build();
 
-        orderItems.forEach(orderItem -> {
-            orderItem.setOrder(order);
-        });
+        orderItems.forEach(orderItem -> orderItem.setOrder(order));
 
         orderRepository.save(order);
     }
 
-    public SimpleResponse placeOrder(Principal principal, OrderRequestFromCart orderRequest) {
+
+    @Async
+    public void placeOrder(Principal principal, OrderRequestFromCart orderRequest) {
         User user = userService.findUserByEmail(principal.getName());
+
 
         List<OrderItem> orderItems = orderRequest.getCartItemIds().stream()
                 .map(id -> cartItemRepository.findById(id).get())
                 .map(orderItemMapper::toOrderItem)
                 .toList();
-
         saveOrder(user, orderItems);
+        cartService.clearCart(principal);
 
         emailService.sendEmail(user.getEmail(), "Order placing", "Your order placed successfully");
 
-        return new SimpleResponse("Order placed successfully", "Saved");
     }
 
 
@@ -101,7 +102,7 @@ public class OrderService {
         User user = userService.findUserByEmail(principal.getName());
 
         List<OrderItem> orderItems = orderRequest.getOrderItems().stream()
-                .map((orderItem) -> {
+                .map(orderItem -> {
                     Product product = productRepository.findById(orderItem.getProductId()).orElseThrow(() -> new NotFoundException("Product not found"));
                     if (product.getAmount() < orderItem.getQuantity()) {
                         throw new ECommerceException("Not enough product in stock");

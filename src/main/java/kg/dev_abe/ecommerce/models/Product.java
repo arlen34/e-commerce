@@ -17,6 +17,30 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "products")
+@NamedEntityGraph(
+        name = "product-entity-graph",
+        attributeNodes = {
+                @NamedAttributeNode("imageList"),
+//                @NamedAttributeNode(value = "reviews", subgraph = "review-subgraph"),
+                @NamedAttributeNode(value = "category", subgraph = "category-subgraph")
+        },
+        subgraphs = {
+//                @NamedSubgraph(
+//                        name = "review-subgraph",
+//                        attributeNodes = {
+//                                @NamedAttributeNode("user")
+//                        }
+//
+//                ),
+                @NamedSubgraph(
+                        name = "category-subgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode("image")
+                        }
+                )
+        }
+)
+
 public class Product {
     private static final String SEQ_NAME = "product_seq";
 
@@ -35,11 +59,10 @@ public class Product {
     @Column(name = "receipt_date", columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private LocalDate receiptDate;
 
-
-
     @ManyToOne
+    @JoinColumn
     private Category category;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,7 +71,7 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
     private List<CartItem> cartItems;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true  ,mappedBy = "product")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
     private List<OrderItem> orderItems;
 
 
@@ -60,3 +83,5 @@ public class Product {
         this.receiptDate = LocalDate.now();
     }
 }
+
+

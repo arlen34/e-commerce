@@ -49,8 +49,8 @@ public class OrderController {
 
     @Operation(summary = "Place order", description = "This endpoint place order from cart")
     @PostMapping("/place-order")
-    public SimpleResponse placeOrder(@RequestBody OrderRequestFromCart orderRequest, Principal principal) {
-        return orderService.placeOrder(principal, orderRequest);
+    public void placeOrder(@RequestBody OrderRequestFromCart orderRequest, Principal principal) {
+         orderService.placeOrder(principal, orderRequest);
     }
     @Operation(summary = "Create order from admin panel", description = "This endpoint create order")
     @PostMapping("/create-order")

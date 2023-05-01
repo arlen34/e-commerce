@@ -7,7 +7,6 @@ import kg.dev_abe.ecommerce.models.Category;
 import kg.dev_abe.ecommerce.models.Image;
 import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -62,7 +61,8 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Not found"));
 
         category.setCategoryName(categoryName);
-        category.setImage(Image.parseImage(file));
+        if (file != null)
+            category.setImage(Image.parseImage(file));
         categoryRepository.save(category);
         return getCategories(category.getParentCategory());
     }

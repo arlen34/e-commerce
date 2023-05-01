@@ -21,8 +21,10 @@ public class Review {
     private Long id;
     private String text;
     private LocalDate date;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id",nullable = false)
     private User user;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="product_id")
     private Product product;
 }

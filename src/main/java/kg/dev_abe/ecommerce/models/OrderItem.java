@@ -7,7 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Builder
 @Entity
 public class OrderItem {
@@ -19,8 +18,10 @@ public class OrderItem {
     private Long orderItemId;
     private int quantity;
     @ManyToOne
+    @JoinColumn
     private Product product;
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @JoinColumn
     private Order order;
     private double totalPrice;
 }
