@@ -17,4 +17,5 @@ public class OrderResponse {
     private OrderStatus orderStatus;
     private double totalPrice;
     private List<OrderItemResponse> orderItems;
+    private UserResponse customer;
 }
