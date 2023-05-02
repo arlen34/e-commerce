@@ -2,7 +2,9 @@ package kg.dev_abe.ecommerce.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kg.dev_abe.ecommerce.dto.response.AllCategoriesResponses;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
+import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import kg.dev_abe.ecommerce.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,11 +20,19 @@ import java.util.List;
 @Tag(name = "Category API",description = "The categories API for all")
 public class CategoryController {
     private final CategoryService categoryService;
+    private final CategoryRepository repository;
     @Operation(summary = "Get all categories",
             description = "This endpoint returns all categories")
     @GetMapping
     public List<CategoryResponse> getAllCategories() {
         return categoryService.getCategories(null);
+    }
+
+    @Operation(summary = "Get all categories with sub categories",
+            description = "This endpoint returns all categories and their sub categories")
+    @GetMapping("get-all-categories-with-sub-categories")
+    public List<AllCategoriesResponses> getAllCategoriesWithSubs(){
+        return categoryService.getAllCategoriesWithSubs(repository.findAllByParentCategoryIsNull());
     }
 
     @Operation(summary = "Get categories by parent category id",
