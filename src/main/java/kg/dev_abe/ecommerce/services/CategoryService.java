@@ -1,6 +1,7 @@
 package kg.dev_abe.ecommerce.services;
 
 import jakarta.transaction.Transactional;
+import kg.dev_abe.ecommerce.dto.response.AllCategoriesResponses;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
 import kg.dev_abe.ecommerce.mappers.CategoryMapper;
 import kg.dev_abe.ecommerce.models.Category;
@@ -81,4 +82,7 @@ public class CategoryService {
     }
 
 
+    public List<AllCategoriesResponses> getAllCategoriesWithSubs(List<Category> categories) {
+        return categories.stream().map(categoryMapper::toCategoriesResponse).toList();
+    }
 }
