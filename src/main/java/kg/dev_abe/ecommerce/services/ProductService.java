@@ -6,14 +6,10 @@ import kg.dev_abe.ecommerce.dto.request.ProductUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.ProductDetailsResponse;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.mappers.ProductDetailsResponseMapper;
-import kg.dev_abe.ecommerce.models.CartItem;
 import kg.dev_abe.ecommerce.models.Category;
 import kg.dev_abe.ecommerce.models.Image;
 import kg.dev_abe.ecommerce.models.Product;
-import kg.dev_abe.ecommerce.repositories.CartItemRepository;
-import kg.dev_abe.ecommerce.repositories.CategoryRepository;
-import kg.dev_abe.ecommerce.repositories.ProductImageRepository;
-import kg.dev_abe.ecommerce.repositories.ProductRepository;
+import kg.dev_abe.ecommerce.repositories.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +30,7 @@ public class ProductService {
     private final ProductDetailsResponseMapper productDetailsResponseMapper;
     private final CategoryRepository categoryRepository;
     private final CartItemRepository cartItemRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ProductImageRepository productImageRepository;
 
     public SimpleResponse create(ProductCreateRequest request) {
@@ -67,7 +64,10 @@ public class ProductService {
     public Page<ProductDetailsResponse> deleteById(Long id) {
         Pageable pageable = Pageable.unpaged();
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
-        product.getCartItems().forEach(c -> cartItemRepository.updateForDelete(c.getId()));
+
+        cartItemRepository.deleteByProductId(id);
+        orderItemRepository.deleteByProductId(id);
+
         productRepository.delete(product);
         return getAllProductsByCategoryId(product.getCategory().getId(), pageable);
     }

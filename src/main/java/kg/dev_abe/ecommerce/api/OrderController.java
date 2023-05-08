@@ -54,8 +54,8 @@ public class OrderController {
     }
     @Operation(summary = "Create order from admin panel", description = "This endpoint create order")
     @PostMapping("/create-order")
-    public SimpleResponse createOrder(@RequestBody OrderRequest orderRequest, Principal principal) {
-        return orderService.createOrder(orderRequest, principal);
+    public void createOrder(@RequestBody OrderRequest orderRequest, Principal principal) {
+         orderService.createOrder(orderRequest, principal);
     }
     @Operation(summary = "Get all orders", description = "This endpoint returns all orders")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
@@ -67,8 +67,8 @@ public class OrderController {
     @Operation(summary = "Delete order", description = "This endpoint delete order by id")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @DeleteMapping("/{orderId}")
-    public SimpleResponse deleteOrder(@PathVariable Long orderId) {
-        return orderService.deleteOrder(orderId);
+    public void deleteOrder(@PathVariable Long orderId) {
+         orderService.deleteOrder(orderId);
     }
 
 
@@ -86,8 +86,8 @@ public class OrderController {
 
     @PostMapping("/{orderId}/complete")
     @Operation(summary = "Complete order", description = "This endpoint complete order by id")
-    public SimpleResponse completeOrder(@PathVariable Long orderId) {
-         return orderService.completeOrder(orderId);
+    public void completeOrder(@PathVariable Long orderId) {
+          orderService.completeOrder(orderId);
     }
 
 }

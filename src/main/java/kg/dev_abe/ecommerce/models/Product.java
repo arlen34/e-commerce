@@ -9,7 +9,9 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,23 +23,22 @@ import java.util.List;
         name = "product-entity-graph",
         attributeNodes = {
                 @NamedAttributeNode("imageList"),
-//                @NamedAttributeNode(value = "reviews", subgraph = "review-subgraph"),
-                @NamedAttributeNode(value = "category", subgraph = "category-subgraph")
+                @NamedAttributeNode(value = "reviews", subgraph = "review-subgraph"),
+                @NamedAttributeNode(value = "category",subgraph = "category-subgraph")
         },
         subgraphs = {
-//                @NamedSubgraph(
-//                        name = "review-subgraph",
-//                        attributeNodes = {
-//                                @NamedAttributeNode("user")
-//                        }
-//
-//                ),
                 @NamedSubgraph(
-                        name = "category-subgraph",
+                        name = "review-subgraph",
                         attributeNodes = {
-                                @NamedAttributeNode("image")
+                                @NamedAttributeNode("user")
                         }
-                )
+
+                ),
+                @NamedSubgraph(name = "category-subgraph",
+                attributeNodes = {
+                        @NamedAttributeNode("image")
+                })
+
         }
 )
 
@@ -59,20 +60,20 @@ public class Product {
     @Column(name = "receipt_date", columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private LocalDate receiptDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Category category;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
-    private List<Review> reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Review> reviews = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> imageList = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
-    private List<CartItem> cartItems;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product")
-    private List<OrderItem> orderItems;
+    @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
 
     public Product(ProductCreateRequest request) {

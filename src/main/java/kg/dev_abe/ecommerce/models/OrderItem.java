@@ -9,6 +9,18 @@ import lombok.*;
 @Setter
 @Builder
 @Entity
+@NamedEntityGraph(
+        name = "order-item-entity-graph",
+        attributeNodes = {
+                @NamedAttributeNode(value = "product",subgraph = "product-subgraph"),
+                @NamedAttributeNode(value = "order",subgraph = "order-subgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(name = "product-subgraph",attributeNodes = {@NamedAttributeNode("imageList")} ),
+                @NamedSubgraph(name = "order-subgraph",attributeNodes = {@NamedAttributeNode("user")} )
+
+        }
+)
 public class OrderItem {
     private static final String SEQ_NAME = "order_item_seq";
 
@@ -17,7 +29,8 @@ public class OrderItem {
     @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME, allocationSize = 1, initialValue = 4)
     private Long orderItemId;
     private int quantity;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Product product;
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)

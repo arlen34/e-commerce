@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @Builder
 @Entity
 @Table(name = "reviews")
+
 public class Review {
     private static final String SEQ_NAME = "review_seq";
 
@@ -22,9 +23,10 @@ public class Review {
     private String text;
     private LocalDate date;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn()
     private User user;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="product_id")
+    @JoinColumn()
     private Product product;
 }
