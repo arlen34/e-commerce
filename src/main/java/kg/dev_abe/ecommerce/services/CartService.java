@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import kg.dev_abe.ecommerce.dto.response.CartItemResponse;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
+import kg.dev_abe.ecommerce.exceptions.NotFoundException;
 import kg.dev_abe.ecommerce.mappers.CartItemMapper;
 import kg.dev_abe.ecommerce.mappers.ProductDetailsResponseMapper;
 import kg.dev_abe.ecommerce.models.Cart;
@@ -32,6 +33,11 @@ public class CartService {
 
     private final ProductDetailsResponseMapper responseMapper;
     private final CartItemMapper cartItemMapper;
+
+    public CartItem getById(Long id) {
+        return itemRepository.findById(id).orElseThrow(NoClassDefFoundError::new);
+    }
+
     public CartItemResponse addToCart(Long productId, Principal principal) {
         Cart cart = cartRepository.findByUserEmail(principal.getName());
 
@@ -54,7 +60,7 @@ public class CartService {
     }
 
     public SimpleResponse changeQuantity(Long cartItemId, Integer quantity) {
-        CartItem cartItem = itemRepository.findById(cartItemId).get();
+        CartItem cartItem = itemRepository.findById(cartItemId).orElseThrow(NotFoundException::new);
         if (cartItem.getProduct().getAmount() < quantity) {
             throw new ECommerceException("The quantity should not be more than product amount!");
         }
@@ -72,7 +78,7 @@ public class CartService {
     }
 
     public SimpleResponse deleteItemFromCart(Long cartItemId){
-        itemRepository.updateForDelete(cartItemId);
+        itemRepository.deleteById(cartItemId);
         return new SimpleResponse("The cart successfully deleted", "DELETE");
     }
     public void clearCart(Principal principal) {

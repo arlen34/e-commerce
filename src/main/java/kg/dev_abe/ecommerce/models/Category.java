@@ -12,6 +12,13 @@ import java.util.List;
 @Entity
 @Table(name = "categories")
 @Builder
+@NamedEntityGraph(
+        name = "category-entity-graph",
+        attributeNodes = {
+                @NamedAttributeNode("image"),
+        }
+)
+
 public class Category {
     private static final String SEQ_NAME = "category_seq";
 
@@ -22,15 +29,17 @@ public class Category {
 
     private String categoryName;
 
-    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn
     private Image image;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "category", orphanRemoval = true)
-    private List<Product> products;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private Category parentCategory;
 
-    @OneToMany(mappedBy ="parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories;
+
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Product> products;
 }

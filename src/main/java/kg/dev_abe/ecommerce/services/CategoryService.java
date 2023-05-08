@@ -61,8 +61,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Not found"));
 
         category.setCategoryName(categoryName);
-        if (file != null)
-            category.setImage(Image.parseImage(file));
+        if (file != null)category.setImage(Image.parseImage(file));
         categoryRepository.save(category);
         return getCategories(category.getParentCategory());
     }
@@ -72,9 +71,9 @@ public class CategoryService {
         if (category.getParentCategory() != null) {
             category.getProducts().forEach(p -> productService.deleteById(p.getId()));
         } else {
-            category.getCategories().forEach((c) -> {
-                c.getProducts().forEach(p -> productService.deleteById(p.getId()));
-            });
+            category.getCategories().forEach(c ->
+                c.getProducts().forEach(p -> productService.deleteById(p.getId()) )
+            );
         }
         categoryRepository.delete(category);
         return getCategories(null);

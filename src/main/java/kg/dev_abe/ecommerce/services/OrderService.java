@@ -3,7 +3,6 @@ package kg.dev_abe.ecommerce.services;
 import kg.dev_abe.ecommerce.dto.request.OrderRequest;
 import kg.dev_abe.ecommerce.dto.request.OrderRequestFromCart;
 import kg.dev_abe.ecommerce.dto.response.OrderResponse;
-import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
 import kg.dev_abe.ecommerce.exceptions.NotFoundException;
 import kg.dev_abe.ecommerce.mappers.OrderItemMapper;
@@ -13,7 +12,7 @@ import kg.dev_abe.ecommerce.models.OrderItem;
 import kg.dev_abe.ecommerce.models.Product;
 import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.models.enums.OrderStatus;
-import kg.dev_abe.ecommerce.repositories.CartItemRepository;
+import kg.dev_abe.ecommerce.repositories.OrderItemRepository;
 import kg.dev_abe.ecommerce.repositories.OrderRepository;
 import kg.dev_abe.ecommerce.repositories.ProductRepository;
 import kg.dev_abe.ecommerce.util.InvoiceGenerator;
@@ -33,21 +32,27 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @Transactional
 @Service
 @Slf4j
 @AllArgsConstructor
 public class OrderService {
-    private OrderRepository orderRepository;
     private UserService userService;
+    private OrderRepository orderRepository;
+    private OrderItemRepository orderItemRepository;
     private ProductRepository productRepository;
-    private CartItemRepository cartItemRepository;
+
     private CartService cartService;
     private OrderMapper orderMapper;
     private OrderItemMapper orderItemMapper;
+
     private EmailService emailService;
     private InvoiceGenerator invoiceGenerator;
+
+    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable)
+                .map(orderMapper::toOrderResponse);
+    }
 
     public List<OrderResponse> getUserOrders(Principal principal) {
         return orderRepository.findAllByUserEmail(principal.getName())
@@ -86,27 +91,25 @@ public class OrderService {
 
 
         List<OrderItem> orderItems = orderRequest.getCartItemIds().stream()
-                .map(id -> cartItemRepository.findById(id).get())
+                .map(id -> cartService.getById(id))
                 .map(orderItemMapper::toOrderItem)
                 .toList();
         saveOrder(user, orderItems);
         cartService.clearCart(principal);
 
-        emailService.sendEmail(user.getEmail(), "Order placing", "Your order placed successfully");
+//        emailService.sendEmail(user.getEmail(), "Order placing", "Your order placed successfully");
 
     }
 
 
-    //write create order from OrderRequest
-    public SimpleResponse createOrder(OrderRequest orderRequest, Principal principal) {
+    public void createOrder(OrderRequest orderRequest, Principal principal) {
         User user = userService.findUserByEmail(principal.getName());
 
         List<OrderItem> orderItems = orderRequest.getOrderItems().stream()
                 .map(orderItem -> {
-                    Product product = productRepository.findById(orderItem.getProductId()).orElseThrow(() -> new NotFoundException("Product not found"));
-                    if (product.getAmount() < orderItem.getQuantity()) {
+                    Product product = productRepository.findById(orderItem.getProductId()).orElseThrow(NotFoundException::new);
+                    if (product.getAmount() < orderItem.getQuantity())
                         throw new ECommerceException("Not enough product in stock");
-                    }
                     return OrderItem.builder()
                             .product(product)
                             .quantity(orderItem.getQuantity())
@@ -117,9 +120,7 @@ public class OrderService {
 
         saveOrder(user, orderItems);
 
-        emailService.sendEmail(user.getEmail(), "Order placing", "Your order placed successfully");
 
-        return new SimpleResponse("Order placed successfully", "Saved");
     }
 
     @Async
@@ -133,18 +134,12 @@ public class OrderService {
         orderRepository.save(order);
 
 
-        emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
+//        emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
 
     }
 
-    public SimpleResponse deleteOrder(Long orderId) {
+    public void deleteOrder(Long orderId) {
         orderRepository.deleteById(orderId);
-        return new SimpleResponse("Order deleted successfully", "Deleted");
-    }
-
-    public Page<OrderResponse> getAllOrders(Pageable pageable) {
-        return orderRepository.findAll(pageable)
-                .map(orderMapper::toOrderResponse);
     }
 
     @Async
@@ -157,11 +152,10 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.CANCELED);
 
         orderRepository.save(order);
-        emailService.sendEmail(order.getUser().getEmail(), "Order cancellation", "Your order canceled successfully");
+//        emailService.sendEmail(order.getUser().getEmail(), "Order cancellation", "Your order canceled successfully");
     }
-    //write confirm order method
 
-    public SimpleResponse completeOrder(Long orderId) {
+    public void completeOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
         if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELED)
             throw new ECommerceException("Order already completed or canceled");
@@ -169,7 +163,6 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.COMPLETED);
         orderRepository.save(order);
 
-        return new SimpleResponse("Order completed successfully", "Completed");
     }
 
 
@@ -203,4 +196,7 @@ public class OrderService {
     }
 
 }
+
+
+
 
