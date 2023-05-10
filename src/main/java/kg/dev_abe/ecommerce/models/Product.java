@@ -35,13 +35,11 @@ import java.util.Set;
 
                 ),
                 @NamedSubgraph(name = "category-subgraph",
-                attributeNodes = {
-                        @NamedAttributeNode("image")
-                })
-
+                        attributeNodes = {
+                                @NamedAttributeNode("image")
+                        })
         }
 )
-
 public class Product {
     private static final String SEQ_NAME = "product_seq";
 
@@ -66,13 +64,13 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> imageList = new ArrayList<>();
 
 
-    @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.REMOVE,orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.REMOVE,orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
 

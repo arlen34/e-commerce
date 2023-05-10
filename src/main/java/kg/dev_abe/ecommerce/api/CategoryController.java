@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.response.AllCategoriesResponses;
 import kg.dev_abe.ecommerce.dto.response.CategoryResponse;
-import kg.dev_abe.ecommerce.repositories.CategoryRepository;
 import kg.dev_abe.ecommerce.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,11 +19,10 @@ import java.util.List;
 @Tag(name = "Category API",description = "The categories API for all")
 public class CategoryController {
     private final CategoryService categoryService;
-    private final CategoryRepository repository;
-    @Operation(summary = "Get all categories",
-            description = "This endpoint returns all categories")
+    @Operation(summary = "Get Root categories",
+            description = "This endpoint returns parent/root categories")
     @GetMapping
-    public List<CategoryResponse> getAllCategories() {
+    public List<CategoryResponse> getRootCategories() {
         return categoryService.getCategories(null);
     }
 
@@ -32,7 +30,7 @@ public class CategoryController {
             description = "This endpoint returns all categories and their sub categories")
     @GetMapping("get-all-categories-with-sub-categories")
     public List<AllCategoriesResponses> getAllCategoriesWithSubs(){
-        return categoryService.getAllCategoriesWithSubs(repository.findAllByParentCategoryIsNull());
+        return categoryService.getAllCategoriesWithSubs();
     }
 
     @Operation(summary = "Get categories by parent category id",
@@ -55,17 +53,17 @@ public class CategoryController {
     @Operation(summary = "Update categories",
             description = "This endpoint returns the updated categories")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
-    @PatchMapping
-    public List<CategoryResponse> updateCategory(@RequestParam Long categoryId, @RequestParam("categoryName") String categoryName, @RequestParam(value = "file" ,required = false) MultipartFile file) {
-        return categoryService.update(categoryId,categoryName,file);
+    @PatchMapping("/{id}")
+    public void updateCategory(@PathVariable Long id, @RequestParam("categoryName") String categoryName, @RequestParam(value = "file" ,required = false) MultipartFile file) {
+        categoryService.update(id,categoryName,file);
     }
 
     @Operation(summary = "Delete categories",
             description = "This endpoint returns the delete category")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @DeleteMapping("/{id}")
-    public List<CategoryResponse> deleteCategory(@PathVariable Long id) {
-        return categoryService.deleteCategory(id);
+    public void deleteCategory(@PathVariable Long id) {
+         categoryService.deleteCategory(id);
     }
 
 }

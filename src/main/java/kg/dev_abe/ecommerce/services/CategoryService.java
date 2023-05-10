@@ -57,31 +57,33 @@ public class CategoryService {
 
     }
 
-
-    public List<CategoryResponse> update(Long categoryId,String categoryName,MultipartFile file) {
+    @Transactional
+    public void update(Long categoryId, String categoryName, MultipartFile file) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Not found"));
-
         category.setCategoryName(categoryName);
-        if (file != null)category.setImage(Image.parseImage(file));
+
+        if (file != null) category.setImage(Image.parseImage(file));
+
         categoryRepository.save(category);
-        return getCategories(category.getParentCategory());
+        getCategories(category.getParentCategory());
     }
 
-    public List<CategoryResponse> deleteCategory(Long id) {
+    @Transactional
+    public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
         if (category.getParentCategory() != null) {
             category.getProducts().forEach(p -> productService.deleteById(p.getId()));
         } else {
             category.getCategories().forEach(c ->
-                c.getProducts().forEach(p -> productService.deleteById(p.getId()) )
+                    c.getProducts().forEach(p -> productService.deleteById(p.getId()))
             );
         }
         categoryRepository.delete(category);
-        return getCategories(null);
+        getCategories(null);
     }
 
-
-    public List<AllCategoriesResponses> getAllCategoriesWithSubs(List<Category> categories) {
-        return categories.stream().map(categoryMapper::toCategoriesResponse).toList();
+    @Transactional
+    public List<AllCategoriesResponses> getAllCategoriesWithSubs() {
+        return categoryRepository.findAll().stream().map(categoryMapper::toCategoriesResponse).toList();
     }
 }

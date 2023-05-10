@@ -14,11 +14,24 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 @Builder
+@NamedEntityGraph(
+        name = "order-entity-graph",
+        attributeNodes = {
+                @NamedAttributeNode(value = "orderItems", subgraph = "orderItems-subgraph"),
+                @NamedAttributeNode("user")
+        },
+        subgraphs = {
+                @NamedSubgraph(name = "orderItems-subgraph", attributeNodes = @NamedAttributeNode(value = "product",subgraph = "product-subgraph")),
+                @NamedSubgraph(name = "product-subgraph", attributeNodes = @NamedAttributeNode("imageList"))
+        }
+)
+
+
 public class Order {
     private static final String SEQ_NAME = "order_seq";
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_NAME)
-    @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME, allocationSize = 1, initialValue = 1)
+    @SequenceGenerator(name = SEQ_NAME, sequenceName = SEQ_NAME, allocationSize = 1)
     private Long orderId;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
@@ -26,6 +39,7 @@ public class Order {
     private User user;
 
     private LocalDate orderDate;
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     private double totalPrice;
 

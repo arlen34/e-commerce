@@ -18,6 +18,22 @@ import java.util.List;
                 @NamedAttributeNode("image"),
         }
 )
+@NamedEntityGraph(
+        name = "category-entity-graph-with-subcategories",
+        attributeNodes = {
+                @NamedAttributeNode("image"),
+                @NamedAttributeNode("parentCategory"),
+                @NamedAttributeNode(value = "categories", subgraph = "subcategory-subgraph")
+        }, subgraphs = {
+            @NamedSubgraph(
+                    name = "subcategory-subgraph",
+                    attributeNodes = {
+                            @NamedAttributeNode("image")
+                    }
+            )
+        }
+)
+
 
 public class Category {
     private static final String SEQ_NAME = "category_seq";
@@ -40,6 +56,6 @@ public class Category {
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> categories;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 }

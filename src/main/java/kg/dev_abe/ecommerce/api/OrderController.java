@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.OrderRequest;
 import kg.dev_abe.ecommerce.dto.request.OrderRequestFromCart;
 import kg.dev_abe.ecommerce.dto.response.OrderResponse;
-import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.services.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -72,19 +71,19 @@ public class OrderController {
     }
 
 
-    @PostMapping("/{orderId}/cancel")
+    @PatchMapping("/{orderId}/cancel")
     @Operation(summary = "Cancel order", description = "This endpoint cancel order by id")
     public void cancelOrder(@PathVariable Long orderId) {
         orderService.cancelOrder(orderId);
     }
 
-    @PostMapping("/{orderId}/confirm")
+    @PatchMapping("/{orderId}/confirm")
     @Operation(summary = "Confirm order", description = "This endpoint confirm order by id")
     public void confirmOrder(@PathVariable Long orderId) {
         orderService.confirmOrder(orderId);
     }
 
-    @PostMapping("/{orderId}/complete")
+    @PatchMapping("/{orderId}/complete")
     @Operation(summary = "Complete order", description = "This endpoint complete order by id")
     public void completeOrder(@PathVariable Long orderId) {
           orderService.completeOrder(orderId);

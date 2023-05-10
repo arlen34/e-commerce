@@ -3,6 +3,7 @@ package kg.dev_abe.ecommerce.repositories;
 import kg.dev_abe.ecommerce.models.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,8 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order,Long> {
     List<Order> findAllByUserEmail(String email);
     Page<Order> findAll(Pageable pageable);
+
+    @EntityGraph(value = "order-entity-graph",type = EntityGraph.EntityGraphType.FETCH)
     Optional<Order> findById(Long orderId);
 }
 
