@@ -21,14 +21,14 @@ import java.util.List;
 @NamedEntityGraph(
         name = "category-entity-graph-with-subcategories",
         attributeNodes = {
-                @NamedAttributeNode("image"),
-                @NamedAttributeNode("parentCategory"),
-                @NamedAttributeNode(value = "categories", subgraph = "subcategory-subgraph")
+                @NamedAttributeNode(value = "categories", subgraph = "subcategory-subgraph"),
+                @NamedAttributeNode("parentCategory")
         }, subgraphs = {
             @NamedSubgraph(
                     name = "subcategory-subgraph",
                     attributeNodes = {
-                            @NamedAttributeNode("image")
+                            @NamedAttributeNode("parentCategory"),
+                            @NamedAttributeNode("categories")
                     }
             )
         }
@@ -45,7 +45,7 @@ public class Category {
 
     private String categoryName;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     @JoinColumn
     private Image image;
 

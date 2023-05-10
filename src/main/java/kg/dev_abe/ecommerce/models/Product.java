@@ -64,13 +64,13 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
 
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> imageList = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "product",cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
-    @OneToMany(mappedBy = "product",cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
 
