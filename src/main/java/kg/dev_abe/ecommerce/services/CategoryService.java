@@ -65,7 +65,6 @@ public class CategoryService {
         if (file != null) category.setImage(Image.parseImage(file));
 
         categoryRepository.save(category);
-        getCategories(category.getParentCategory());
     }
 
     @Transactional
@@ -79,7 +78,6 @@ public class CategoryService {
             );
         }
         categoryRepository.delete(category);
-        getCategories(null);
     }
 
     @Transactional
