@@ -21,7 +21,7 @@ import kg.dev_abe.ecommerce.models.User;
 import kg.dev_abe.ecommerce.models.enums.Role;
 import kg.dev_abe.ecommerce.repositories.UserRepository;
 import kg.dev_abe.ecommerce.security.jwt.JwtUtils;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,10 +32,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -115,19 +114,21 @@ public class UserService {
     public List<UserResponse> getUsers() {
         return userRepository.findUsers().stream().map(userMapper::toUserResponse).toList();
     }
-
     public AuthResponse authWithGoogleAccount(String tokenId) throws FirebaseAuthException {
         FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(tokenId);
-        User user;
         if (!userRepository.existsUserByEmail(firebaseToken.getEmail())) {
-            User newUser = new User();
             String[] name = firebaseToken.getName().split(" ");
-            newUser.setName(name[0]);
-            newUser.setSurname(name[1]);
-            newUser.setRole(Role.USER);
+            User newUser = User.builder()
+                    .email(firebaseToken.getEmail())
+                    .password(firebaseToken.getEmail())
+                    .name(name[0])
+                    .surname(name[1])
+                    .phoneNumber("null")
+                    .role(Role.USER)
+                    .build();
             userRepository.save(newUser);
         }
-        user = userRepository.findUserByEmail(firebaseToken.getEmail());
+        User user = userRepository.findUserByEmail(firebaseToken.getEmail());
         return new AuthResponse(user.getEmail(),
                 jwtUtils.generateToken(user.getEmail()),
                 user.getRole());
