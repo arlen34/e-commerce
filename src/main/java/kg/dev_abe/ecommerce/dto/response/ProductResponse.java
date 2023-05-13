@@ -14,5 +14,4 @@ public class ProductResponse {
     private String productName;
     private Double price;
     private ImageDto imageDto;
-
 }

@@ -6,7 +6,7 @@ import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
 import kg.dev_abe.ecommerce.exceptions.NotFoundException;
 import kg.dev_abe.ecommerce.mappers.CartItemMapper;
-import kg.dev_abe.ecommerce.mappers.ProductDetailsResponseMapper;
+import kg.dev_abe.ecommerce.mappers.ProductMapper;
 import kg.dev_abe.ecommerce.models.Cart;
 import kg.dev_abe.ecommerce.models.CartItem;
 import kg.dev_abe.ecommerce.repositories.CartItemRepository;
@@ -31,7 +31,7 @@ public class CartService {
     private final ProductRepository productRepo;
     private final CartRepository cartRepository;
 
-    private final ProductDetailsResponseMapper responseMapper;
+    private final ProductMapper responseMapper;
     private final CartItemMapper cartItemMapper;
 
     public CartItem getById(Long id) {

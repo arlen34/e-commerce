@@ -82,6 +82,9 @@ public class CategoryService {
 
     @Transactional
     public List<AllCategoriesResponses> getAllCategoriesWithSubs() {
-        return categoryRepository.findAllByParentCategoryIsNull().stream().map(categoryMapper::toCategoriesResponse).toList();
+        List<Category> categories = categoryRepository.findAll();
+        return categoryMapper.mapToAllCategoriesResponses(categories);
     }
+
+
 }

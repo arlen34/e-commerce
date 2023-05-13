@@ -13,11 +13,9 @@ import lombok.*;
         name = "order-item-entity-graph",
         attributeNodes = {
                 @NamedAttributeNode(value = "product",subgraph = "product-subgraph"),
-                @NamedAttributeNode(value = "order",subgraph = "order-subgraph")
         },
         subgraphs = {
                 @NamedSubgraph(name = "product-subgraph",attributeNodes = {@NamedAttributeNode("imageList")} ),
-                @NamedSubgraph(name = "order-subgraph",attributeNodes = {@NamedAttributeNode("user")} )
 
         }
 )
@@ -33,7 +31,7 @@ public class OrderItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Product product;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Order order;
     private double totalPrice;

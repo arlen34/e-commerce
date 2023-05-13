@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.ProductCreateRequest;
 import kg.dev_abe.ecommerce.dto.request.ProductUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.ProductDetailsResponse;
+import kg.dev_abe.ecommerce.dto.response.ProductResponse;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
 import kg.dev_abe.ecommerce.services.ProductService;
 import lombok.AllArgsConstructor;
@@ -35,7 +36,7 @@ public class ProductController {
     @Operation(summary = "Get main page",
             description = "This endpoint returns a list of popular and most sold products")
     @GetMapping
-    public Map<String, List<ProductDetailsResponse>> getMainPage() {
+    public Map<String, List<ProductResponse>> getMainPage() {
         return productService.getMainPage();
     }
 
@@ -66,7 +67,7 @@ public class ProductController {
     @Operation(summary = "Get all products",
             description = "This endpoint returns all products")
     @GetMapping("/get-all/{categoryId}")
-    public Page<ProductDetailsResponse> getProductsByCategoryId(
+    public Page<ProductResponse> getProductsByCategoryId(
             @PathVariable Long categoryId,
             @PageableDefault(sort = {"id"}, direction = DESC) Pageable pageable
     ) {
@@ -93,14 +94,14 @@ public class ProductController {
             description = "This endpoint returns a deleted product with all products")
     @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
     @DeleteMapping("/{id}")
-    public Page<ProductDetailsResponse> deleteProductById(@PathVariable Long id) {
+    public Page<ProductResponse> deleteProductById(@PathVariable Long id) {
         return productService.deleteById(id);
     }
 
     @Operation(summary = "Search by product name or description",
             description = "This endpoint returns a searched products by name and desc in  specified category if category id is present")
     @GetMapping("/search")
-    public Page<ProductDetailsResponse> searchProduct(
+    public Page<ProductResponse> searchProduct(
             @RequestParam String name,
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(sort = {"id"}, direction = DESC) Pageable pageable

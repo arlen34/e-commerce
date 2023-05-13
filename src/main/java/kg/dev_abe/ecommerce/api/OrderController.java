@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kg.dev_abe.ecommerce.dto.request.OrderRequest;
 import kg.dev_abe.ecommerce.dto.request.OrderRequestFromCart;
+import kg.dev_abe.ecommerce.dto.response.OrderDetailsResponse;
 import kg.dev_abe.ecommerce.dto.response.OrderResponse;
 import kg.dev_abe.ecommerce.services.OrderService;
 import lombok.AllArgsConstructor;
@@ -33,9 +34,16 @@ public class OrderController {
         return orderService.getUserOrders(principal);
     }
 
+    @Operation(summary = "Get all orders", description = "This endpoint returns all orders")
+    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
+    @GetMapping("/all-orders")
+    public Page<OrderResponse> getAllOrders(@PageableDefault(sort = "orderId", direction = Sort.Direction.DESC) Pageable pageable) {
+        return orderService.getAllOrders(pageable);
+    }
+
     @Operation(summary = "Get order by id", description = "This endpoint returns order by id")
     @GetMapping("/{orderId}")
-    public OrderResponse getOrderById(@PathVariable Long orderId) {
+    public OrderDetailsResponse getOrderById(@PathVariable Long orderId) {
         return orderService.getOrderById(orderId);
     }
 
@@ -45,7 +53,6 @@ public class OrderController {
     public ResponseEntity<byte[]> generateInvoice(@PathVariable Long orderId) {
         return orderService.generateInvoice(orderId);
     }
-
     @Operation(summary = "Place order", description = "This endpoint place order from cart")
     @PostMapping("/place-order")
     public void placeOrder(@RequestBody OrderRequestFromCart orderRequest, Principal principal) {
@@ -55,12 +62,6 @@ public class OrderController {
     @PostMapping("/create-order")
     public void createOrder(@RequestBody OrderRequest orderRequest, Principal principal) {
          orderService.createOrder(orderRequest, principal);
-    }
-    @Operation(summary = "Get all orders", description = "This endpoint returns all orders")
-    @PreAuthorize("hasAnyAuthority('ADMIN','SUPER_ADMIN')")
-    @GetMapping("/all-orders")
-    public Page<OrderResponse> getAllOrders(@PageableDefault(sort = "orderId", direction = Sort.Direction.DESC) Pageable pageable) {
-        return orderService.getAllOrders(pageable);
     }
 
     @Operation(summary = "Delete order", description = "This endpoint delete order by id")

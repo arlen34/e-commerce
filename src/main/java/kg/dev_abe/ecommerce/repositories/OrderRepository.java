@@ -12,7 +12,9 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Long> {
+    @EntityGraph(value = "order-entity-graph",type = EntityGraph.EntityGraphType.FETCH)
     List<Order> findAllByUserEmail(String email);
+    @EntityGraph(value = "order-entity-graph",type = EntityGraph.EntityGraphType.FETCH)
     Page<Order> findAll(Pageable pageable);
 
     @EntityGraph(value = "order-entity-graph",type = EntityGraph.EntityGraphType.FETCH)

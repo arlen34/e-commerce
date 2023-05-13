@@ -23,8 +23,16 @@ import java.util.Set;
         name = "product-entity-graph",
         attributeNodes = {
                 @NamedAttributeNode("imageList"),
-                @NamedAttributeNode(value = "reviews", subgraph = "review-subgraph"),
-                @NamedAttributeNode(value = "category",subgraph = "category-subgraph")
+               @NamedAttributeNode(value = "category")
+        }
+
+)
+@NamedEntityGraph(
+        name = "product-entity-graph-with-reviews",
+        attributeNodes = {
+                @NamedAttributeNode("imageList"),
+                @NamedAttributeNode(value = "reviews", subgraph = "review-subgraph")
+                ,@NamedAttributeNode(value = "category")
         },
         subgraphs = {
                 @NamedSubgraph(
@@ -33,11 +41,8 @@ import java.util.Set;
                                 @NamedAttributeNode("user")
                         }
 
-                ),
-                @NamedSubgraph(name = "category-subgraph",
-                        attributeNodes = {
-                                @NamedAttributeNode("image")
-                        })
+                )
+
         }
 )
 public class Product {

@@ -19,18 +19,17 @@ import java.util.List;
         }
 )
 @NamedEntityGraph(
-        name = "category-entity-graph-with-subcategories",
+        name = "category-with-subcategories",
         attributeNodes = {
-                @NamedAttributeNode(value = "categories", subgraph = "subcategory-subgraph"),
-                @NamedAttributeNode("parentCategory")
-        }, subgraphs = {
-            @NamedSubgraph(
-                    name = "subcategory-subgraph",
-                    attributeNodes = {
-                            @NamedAttributeNode("parentCategory"),
-                            @NamedAttributeNode("categories")
-                    }
-            )
+                @NamedAttributeNode(value = "categories", subgraph = "subCategories")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "subCategories",
+                        attributeNodes = {
+                                @NamedAttributeNode("categories")
+                        }
+                )
         }
 )
 

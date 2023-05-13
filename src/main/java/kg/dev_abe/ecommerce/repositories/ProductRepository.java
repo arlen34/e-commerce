@@ -23,7 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @EntityGraph(value = "product-entity-graph",type = EntityGraph.EntityGraphType.FETCH)
     @Query(value = "SELECT p FROM Product p ORDER BY p.receiptDate DESC LIMIT 20")
     List<Product> findLatestProducts();
-
+    @EntityGraph(value = "product-entity-graph",type = EntityGraph.EntityGraphType.FETCH)
     @Query(value = "SELECT p FROM Product p ORDER BY p.sold DESC LIMIT 20")
     List<Product> findTopBySoldOrderBySoldDesc();
 
@@ -35,7 +35,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             + "LEFT JOIN FETCH r.user "
             + "WHERE p.id = :id")
      **/
-    @EntityGraph(value = "product-entity-graph",type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(value = "product-entity-graph-with-reviews",type = EntityGraph.EntityGraphType.FETCH)
     Optional<Product> findById(Long id);
 
 }

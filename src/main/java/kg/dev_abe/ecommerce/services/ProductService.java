@@ -4,8 +4,9 @@ import jakarta.transaction.Transactional;
 import kg.dev_abe.ecommerce.dto.request.ProductCreateRequest;
 import kg.dev_abe.ecommerce.dto.request.ProductUpdateRequest;
 import kg.dev_abe.ecommerce.dto.response.ProductDetailsResponse;
+import kg.dev_abe.ecommerce.dto.response.ProductResponse;
 import kg.dev_abe.ecommerce.dto.response.SimpleResponse;
-import kg.dev_abe.ecommerce.mappers.ProductDetailsResponseMapper;
+import kg.dev_abe.ecommerce.mappers.ProductMapper;
 import kg.dev_abe.ecommerce.models.Category;
 import kg.dev_abe.ecommerce.models.Image;
 import kg.dev_abe.ecommerce.models.Product;
@@ -27,7 +28,7 @@ import java.util.Map;
 @Transactional
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ProductDetailsResponseMapper productDetailsResponseMapper;
+    private final ProductMapper productMapper;
     private final CategoryRepository categoryRepository;
     private final CartItemRepository cartItemRepository;
     private final OrderItemRepository orderItemRepository;
@@ -42,14 +43,14 @@ public class ProductService {
     }
 
 
-    public Page<ProductDetailsResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable) {
+    public Page<ProductResponse> getAllProductsByCategoryId(Long categoryId, Pageable pageable) {
 
-        return productRepository.findAllByCategoryIdOrderByReceiptDateDesc(categoryId, pageable).map(productDetailsResponseMapper::toProductResponse);
+        return productRepository.findAllByCategoryIdOrderByReceiptDateDesc(categoryId, pageable).map(productMapper::toProductResponse);
     }
 
     public ProductDetailsResponse getProductById(Long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product was not found"));
-        return productDetailsResponseMapper.toProductResponse(product);
+        return productMapper.toProductDetailsResponse(product);
     }
 
     public ProductDetailsResponse updateById(ProductUpdateRequest request) {
@@ -61,7 +62,7 @@ public class ProductService {
         return getProductById(product.getId());
     }
 
-    public Page<ProductDetailsResponse> deleteById(Long id) {
+    public Page<ProductResponse> deleteById(Long id) {
         Pageable pageable = Pageable.unpaged();
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
 
@@ -76,13 +77,11 @@ public class ProductService {
     public ProductDetailsResponse addImages(Long id, MultipartFile[] files) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found"));
 
-        List<Image> images = Arrays.stream(files)
-                .map(Image::parseImage)
-                .toList();
+        List<Image> images = Arrays.stream(files).map(Image::parseImage).toList();
         product.getImageList().addAll(images);
 
         productRepository.save(product);
-        return productDetailsResponseMapper.toProductResponse(product);
+        return productMapper.toProductDetailsResponse(product);
 
     }
 
@@ -93,41 +92,41 @@ public class ProductService {
         Product product = productRepository.findById(productId).get();
         product.getImageList().remove(productImageRepository.findById(imageId).get());
         productRepository.save(product);
-        return productDetailsResponseMapper.toProductResponse(product);
+        return productMapper.toProductDetailsResponse(product);
     }
 
 
-    public List<ProductDetailsResponse> getTopSoldProducts() {
+    public List<ProductResponse> getTopSoldProducts() {
         return productRepository
                 .findTopBySoldOrderBySoldDesc()
                 .stream()
-                .map(productDetailsResponseMapper::toProductResponse)
+                .map(productMapper::toProductResponse)
                 .toList();
     }
 
-    public List<ProductDetailsResponse> getLatestProducts() {
+    public List<ProductResponse> getLatestProducts() {
         return productRepository.findLatestProducts()
                 .stream()
-                .map(productDetailsResponseMapper::toProductResponse)
+                .map(productMapper::toProductResponse)
                 .toList();
     }
 
-    public Map<String, List<ProductDetailsResponse>> getMainPage() {
+    public Map<String, List<ProductResponse>> getMainPage() {
 
-        Map<String, List<ProductDetailsResponse>> body = new HashMap<>();
-        List<ProductDetailsResponse> topSold = getTopSoldProducts();
-        List<ProductDetailsResponse> latest = getLatestProducts();
+        Map<String, List<ProductResponse>> body = new HashMap<>();
+        List<ProductResponse> topSold = getTopSoldProducts();
+        List<ProductResponse> latest = getLatestProducts();
 
         body.put("topSold", topSold);
         body.put("latest", latest);
         return body;
     }
 
-    public Page<ProductDetailsResponse> searchProduct(String name, Long categoryId, Pageable pageable) {
+    public Page<ProductResponse> searchProduct(String name, Long categoryId, Pageable pageable) {
         if (categoryId == null) {
-            return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productDetailsResponseMapper::toProductResponse);
+            return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(name, name, pageable).map(productMapper::toProductResponse);
         } else {
-            return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndCategoryId(name, name, categoryId, pageable).map(productDetailsResponseMapper::toProductResponse);
+            return productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndCategoryId(name, name, categoryId, pageable).map(productMapper::toProductResponse);
         }
     }
 }

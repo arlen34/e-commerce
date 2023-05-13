@@ -6,7 +6,7 @@ import kg.dev_abe.ecommerce.models.OrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring",uses = {CartItemMapper.class, ProductResponseMapper.class})
+@Mapper(componentModel = "spring",uses = {CartItemMapper.class, ProductMapper.class})
 public interface OrderItemMapper {
     @Mapping(target = "totalPrice", expression = "java(cartItem.evalTotalPrice())")
     @Mapping(target = "orderItemId", ignore = true)

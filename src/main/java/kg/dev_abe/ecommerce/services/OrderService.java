@@ -2,6 +2,7 @@ package kg.dev_abe.ecommerce.services;
 
 import kg.dev_abe.ecommerce.dto.request.OrderRequest;
 import kg.dev_abe.ecommerce.dto.request.OrderRequestFromCart;
+import kg.dev_abe.ecommerce.dto.response.OrderDetailsResponse;
 import kg.dev_abe.ecommerce.dto.response.OrderResponse;
 import kg.dev_abe.ecommerce.exceptions.ECommerceException;
 import kg.dev_abe.ecommerce.exceptions.NotFoundException;
@@ -61,12 +62,15 @@ public class OrderService {
                 .toList();
     }
 
-    public OrderResponse getOrderById(Long orderId) {
-        return orderRepository.findById(orderId)
-                .map(orderMapper::toOrderResponse)
-                .orElseThrow();
+    public OrderDetailsResponse getOrderById(Long orderId) {
+        return orderMapper.toOrderDetailsResponse(findById(orderId));
     }
 
+    public Order findById(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
+        order.setOrderItems(orderItemRepository.findByOrder(order));
+        return order;
+    }
 
     private void saveOrder(User user, List<OrderItem> orderItems) {
         Order order = Order.builder()
@@ -88,7 +92,6 @@ public class OrderService {
     @Async
     public void placeOrder(Principal principal, OrderRequestFromCart orderRequest) {
         User user = userService.findUserByEmail(principal.getName());
-
 
         List<OrderItem> orderItems = orderRequest.getCartItemIds().stream()
                 .map(id -> cartService.getById(id))
@@ -167,7 +170,7 @@ public class OrderService {
 
 
     public ResponseEntity<byte[]> generateInvoice(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
+        Order order = this.findById(orderId);
         byte[] pdfBytes = invoiceGenerator.generateInvoice(order);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
