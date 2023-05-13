@@ -60,8 +60,8 @@ public class OrderController {
     }
     @Operation(summary = "Create order from admin panel", description = "This endpoint create order")
     @PostMapping("/create-order")
-    public void createOrder(@RequestBody OrderRequest orderRequest, Principal principal) {
-         orderService.createOrder(orderRequest, principal);
+    public OrderDetailsResponse createOrder(@RequestBody OrderRequest orderRequest, Principal principal) {
+         return orderService.createOrder(orderRequest, principal);
     }
 
     @Operation(summary = "Delete order", description = "This endpoint delete order by id")

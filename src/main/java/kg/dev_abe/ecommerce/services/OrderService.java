@@ -72,7 +72,7 @@ public class OrderService {
         return order;
     }
 
-    private void saveOrder(User user, List<OrderItem> orderItems) {
+    private Order saveOrder(User user, List<OrderItem> orderItems) {
         Order order = Order.builder()
                 .user(user)
                 .orderStatus(OrderStatus.AWAITING)
@@ -85,7 +85,7 @@ public class OrderService {
 
         orderItems.forEach(orderItem -> orderItem.setOrder(order));
 
-        orderRepository.save(order);
+        return orderRepository.save(order);
     }
 
 
@@ -99,13 +99,10 @@ public class OrderService {
                 .toList();
         saveOrder(user, orderItems);
         cartService.clearCart(principal);
-
-//        emailService.sendEmail(user.getEmail(), "Order placing", "Your order placed successfully");
-
     }
 
 
-    public void createOrder(OrderRequest orderRequest, Principal principal) {
+    public OrderDetailsResponse createOrder(OrderRequest orderRequest, Principal principal) {
         User user = userService.findUserByEmail(principal.getName());
 
         List<OrderItem> orderItems = orderRequest.getOrderItems().stream()
@@ -121,7 +118,7 @@ public class OrderService {
                 }).toList();
 
 
-        saveOrder(user, orderItems);
+        return orderMapper.toOrderDetailsResponse( saveOrder(user, orderItems));
 
 
     }
@@ -129,8 +126,9 @@ public class OrderService {
     @Async
     public void confirmOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
-        if (order.getOrderStatus() == OrderStatus.COMPLETED || order.getOrderStatus() == OrderStatus.CANCELED)
-            throw new ECommerceException("Order already completed or canceled");
+        OrderStatus status = order.getOrderStatus();
+        if (status == OrderStatus.CONFIRMED || status == OrderStatus.CANCELED || status == OrderStatus.COMPLETED)
+            throw new ECommerceException("Order already confirmed or  canceled");
 
         soldProducts(order.getOrderItems(),true);
         order.setOrderStatus(OrderStatus.CONFIRMED);
@@ -179,6 +177,8 @@ public class OrderService {
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 
+
+    @Transactional
     public void soldProducts(List<OrderItem> orderItems, boolean toSell) {
         for (OrderItem orderItem : orderItems) {
             Product product = orderItem.getProduct();
@@ -196,6 +196,7 @@ public class OrderService {
             }
 
         }
+
     }
 
 }
