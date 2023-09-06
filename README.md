@@ -12,4 +12,3 @@ Add items to a shopping cart
 Check out and complete a purchase
 View order history
 Admin panel to manage products, categories, and orders
-![public.png](public.png)
