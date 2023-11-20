@@ -134,7 +134,7 @@ public class OrderService {
         orderRepository.save(order);
 
 
-        emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
+//        emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
 
     }
 
