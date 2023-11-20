@@ -42,6 +42,7 @@ public class OrderService {
     private OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
     private ProductRepository productRepository;
+
     private CartService cartService;
     private OrderMapper orderMapper;
     private OrderItemMapper orderItemMapper;
@@ -134,7 +135,7 @@ public class OrderService {
         orderRepository.save(order);
 
 
-        emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
+//        emailService.sendEmail(order.getUser().getEmail(), "Order confirmation", "Your order confirmed successfully");
 
     }
 
